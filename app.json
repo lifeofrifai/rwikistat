@@ -1,4 +1,11 @@
 {
   "name": "rwikistat",
-  "displayName": "rwikistat"
+  "displayName": "rwikistat",
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "42b9bb16-77e8-489c-81d7-50b452707b1b"
+      }
+    }
+  }
 }
