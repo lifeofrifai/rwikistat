@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TextInput } from "react-native";
+import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TextInput, Alert } from "react-native";
 import ButtonMain from "./button/PrimaryButton";
 import ButtonSec from "./button/SecondaryButton";
 import {useNavigation} from '@react-navigation/native';
@@ -7,9 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import ROUTES from "../constans/routes";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { GoogleSignin,statusCodes } from '@react-native-google-signin/google-signin';
-import { UserAuth } from '../context/authContext';
-// import auth from '@react-native-firebase/auth';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 
 export default () => {
@@ -19,21 +17,39 @@ export default () => {
 
     useEffect(() => {
         GoogleSignin.configure({
-            webClientId: '72157531364-9c72l1rst20td0704jfs20t9km8ois9a.apps.googleusercontent.com', 
-          });
-    }, [])
+            webClientId: '72157531364-9c72l1rst20td0704jfs20t9km8ois9a.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the idToken on the user object, and for offline access.
+            });
+    });
 
+    async function onGoogleButtonPress() {
 
+        try {            
+        
+        // Check if your device supports Google Play
+        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+        // Get the users ID token
+        const { idToken,user } = await GoogleSignin.signIn();
+        console.log(user.UserId)
+        // Alert.alert("Berhasil Masuk")
+        navigation.navigate(ROUTES.MODUL)
+      
+        // Create a Google credential with the token
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-    const {user, googleSignIn,emailSignIn} = UserAuth();
-
-    const handleGoogleSignIn = async() => {
-        try {
-            await googleSignIn();
+      
+        // Sign-in the user with the credential
+        return auth().signInWithCredential(googleCredential);
         } catch (error) {
-            console.log(error);
+             console.log(error)   
         }
-    }
+      }
+
+
+    const [showPassword, setShowPassword] = React.useState(false);
+    const toggleShowPassword = () => { 
+        setShowPassword(!showPassword); 
+    }; 
+    const navigation = useNavigation();
 
     const handleNimChange = (text) => {
         setNim(text);
@@ -46,22 +62,18 @@ export default () => {
 
       const email = `${nim}@example.com`;
 
-      const handleEmailSignIn = async (e) => {
-        e.preventDefault(); // Menghentikan perilaku bawaan form
-        try {
-          await emailSignIn(email, password);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-
-
-    const [showPassword, setShowPassword] = React.useState(false);
-    const toggleShowPassword = () => { 
-        setShowPassword(!showPassword); 
-    }; 
-    const navigation = useNavigation();
+    const loginWithEmailAndPassword = () => {
+        auth().signInWithEmailAndPassword(email, password)
+        .then((res)=> 
+            {console.log(res)
+            // Alert.alert("Berhasil Masuk")
+            navigation.navigate(ROUTES.MODUL)
+        })
+        .catch(err=>{
+            console.log(err)
+            Alert.alert(err.nativeErrorMessage)
+        })
+    };
     
     return (
         <SafeAreaView className="flex-1 justify-center bg-white">
@@ -123,7 +135,7 @@ export default () => {
                         label="Masuk Sebagai Mahasiswa USK"
                         icon={undefined}
                         loading={loading}
-                        onPress={handleEmailSignIn}
+                        onPress={loginWithEmailAndPassword}
                         disabled={undefined}     
                     />
                 </View>
@@ -137,7 +149,7 @@ export default () => {
                     label="Masuk Dengan Google"
                     icon="google"
                     loading={loading}
-                    onPress={handleGoogleSignIn}
+                    onPress={onGoogleButtonPress}
                     disabled={undefined} 
                     
                 />
