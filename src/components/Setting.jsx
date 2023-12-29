@@ -39,14 +39,11 @@ export default () => {
                 <View className="flex-row gap-x-3 py-5">
                     <Image
                         source={photoURL}
-                        className="w-[70] h-[70] rounded-md"
+                        className="w-[70] h-[70] rounded-md bg-blue-200"
                     />
                     <View className="justify-center">
                         <Text className="font-bold text-gray-700 text-2xl">
                         {user.displayName}
-                        </Text>
-                        <Text className="font-bold text-gray-700 text-2xl">
-                        {user.name}
                         </Text>
                         <Text className="text-gray-400 text-base">
                         {user.email}
@@ -58,7 +55,7 @@ export default () => {
                 <View className="h-[2] bg-gray-200 w-full rounded-full"/>
                 <View className="py-5 gap-2">  
                     <SettingButton
-                        icon="ios-chatbox"
+                        icon="chatbox"
                         title="Postingan Saya"
                         iconColor="#323232"
                         onPress={undefined}                      
@@ -79,7 +76,7 @@ export default () => {
                         onPress={undefined}                    
                     />
                     <SettingButton
-                        icon="ios-exit"
+                        icon="exit"
                         title="Keluar"
                         iconColor="#B63838"
                         onPress={handleSignOut}                   

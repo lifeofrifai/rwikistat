@@ -1,7 +1,8 @@
 import { NativeWindStyleSheet } from "nativewind";
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, RefreshControl, FlatList } from "react-native";
 import CardModul from "../../components/CardModul";
+import React from "react";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -18,8 +19,15 @@ interface ModulData {
 
 export default () => {
     const [testData, setTestData] = useState<ModulData[]>([]);
-    const [referesing, setRefreshing] = useState(true);
+    const [refreshing, setRefreshing] = useState(true);
     const [isloading, setIsLoading] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 1000);
+    }, []);
 
     const fetchData = async () => {
         try {
@@ -28,6 +36,7 @@ export default () => {
                 const data = await response.json();
                 setTestData(data);
                 setIsLoading(false);
+                setRefreshing(false);
             } else {
                 console.error('Gagal mengambil data:', response.statusText);
             }
@@ -41,25 +50,39 @@ export default () => {
     }, []);
     
     if (isloading) {
-        return (
-            <View className="flex-1 items-center justify-center bg-[#EBEBEB] ">
-                <ScrollView className="w-full px-5 pt-6">
-                    <Text>Loading...</Text>
-                </ScrollView>
-            </View>
-        );
+    return (
+        <View className="flex-1 items-center justify-center bg-[#EBEBEB] ">
+            <ScrollView className="w-full px-5 pt-6">
+                <Text>Loading...</Text>
+            </ScrollView>
+        </View>
+    );
     }
     return (
         <View className="flex-1 items-center bg-[#EBEBEB] ">
-            <ScrollView className="w-full px-5 pt-6" >
-                {testData.map((item) => (
+            <ScrollView 
+                className="w-full px-5 pt-6" 
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            >
+                {/* {testData.map((item) => (
                     <CardModul
                         key={item.id}
                         title={item.data.namaModul}
                         desc={item.data.judulModul}
                         onPress={undefined}            
                     />  
-                ))}
+                ))} */}
+                <FlatList
+                    data={testData}
+                    renderItem={({ item }) => (
+                        <CardModul
+                            key={item.id}
+                            title={item.data.namaModul}
+                            desc={item.data.judulModul}
+                            onPress={undefined}            
+                        />  
+                    )}
+                />
             </ScrollView>
         </View>
     );
