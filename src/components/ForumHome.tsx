@@ -16,7 +16,7 @@ interface ForumData {
     id: string;
     data: {
         userId: string;
-        topics: string;
+        topics: string; 
         title:string;
         images: string[];
         likes: number;

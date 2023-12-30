@@ -3,12 +3,16 @@ import { NativeWindStyleSheet } from "nativewind";
 import { View, Text, Image } from "react-native";
 import SettingButton from "./button/SettingButton";
 import { UserAuth } from '../context/authContext';
+import {useNavigation} from '@react-navigation/native';
+import ROUTES from "../constans/routes";
+
 
 NativeWindStyleSheet.setOutput({
     default: "native",
 });
 
 export default () => {
+    const navigation = useNavigation();
     const {user, logOut} = UserAuth();
     const photoURL = user?.photoURL || '';
     const [loading, setLoading] = useState(true);
@@ -58,7 +62,7 @@ export default () => {
                         icon="chatbox"
                         title="Postingan Saya"
                         iconColor="#323232"
-                        onPress={undefined}                      
+                        onPress={() => navigation.replace(ROUTES.SETTING_MYPOST)}                   
                     />
                     <SettingButton
                         icon="bookmarks"
