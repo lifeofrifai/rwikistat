@@ -5,7 +5,7 @@ import { signInWithRedirect, signOut, signInWithEmailAndPassword, onAuthStateCha
 import {useNavigation} from '@react-navigation/native';
 import ROUTES from "../constans/routes";
 import { GoogleSignin,statusCodes } from '@react-native-google-signin/google-signin';
-import { auth } from '../../firebase';
+// import { auth } from '../../firebase';
 
 
 
@@ -131,20 +131,20 @@ useEffect(() => { GoogleSignin.configure(
     }
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+  //     setUser(currentUser);
+  //   });
 
-    const autoLogoutTimeout = setTimeout(() => {
-      logOut();
-    }, AUTO_LOGOUT_TIME);
+  //   const autoLogoutTimeout = setTimeout(() => {
+  //     logOut();
+  //   }, AUTO_LOGOUT_TIME);
 
-    return () => {
-      unsubscribe();
-      clearTimeout(autoLogoutTimeout);
-    };
-  }, []);
+  //   return () => {
+  //     unsubscribe();
+  //     clearTimeout(autoLogoutTimeout);
+  //   };
+  // }, []);
 
   return (
     <AuthContext.Provider value={{ user, googleSignIn, emailSignIn, logOut }}>
