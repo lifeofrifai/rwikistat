@@ -1,5 +1,6 @@
 import { Pressable, View, Text } from "react-native"
-import { Ionicons, AntDesign } from '@expo/vector-icons'; 
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 interface SettingButton{
     icon: any,
@@ -20,12 +21,12 @@ const SettingButton = ({
             onPress={onPress}
         >
             <View className="flex-row items-center gap-x-3">
-                {/* <Ionicons name={icon} size={28} color={iconColor} /> */}
+                <Ionicons name={icon} size={22} color={iconColor} />
                 <Text className="text-gray-600 text-base">
                     {title}
                 </Text>
             </View>
-            {/* <AntDesign name="right" size={20} color={iconColor} /> */}
+            <AntDesign name="right" size={20} color={iconColor} />
         </Pressable>
     )
 }

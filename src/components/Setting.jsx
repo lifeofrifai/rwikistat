@@ -2,9 +2,10 @@ import React, { useEffect, useState} from "react";
 import { NativeWindStyleSheet } from "nativewind";
 import { View, Text, Image } from "react-native";
 import SettingButton from "./button/SettingButton";
+import auth from '@react-native-firebase/auth';
+import { UserAuth } from '../context/authContext';
 import {useNavigation} from '@react-navigation/native';
 import ROUTES from "../constans/routes";
-import auth from '@react-native-firebase/auth';
 
 
 NativeWindStyleSheet.setOutput({
@@ -12,6 +13,9 @@ NativeWindStyleSheet.setOutput({
 });
 
 export default () => {
+    const navigation = useNavigation();
+    const {user, logOut} = UserAuth();
+    const photoURL = user?.photoURL || '';
     const [loading, setLoading] = useState(true);
     
     const navigation = useNavigation();
@@ -51,10 +55,10 @@ export default () => {
                     />
                     <View className="justify-center">
                         <Text className="font-bold text-gray-700 text-2xl">
-                        {user?.displayName}
+                            {user?.displayName}
                         </Text>
                         <Text className="text-gray-400 text-base">
-                        {user?.email}
+                            {user?.email}
                         </Text>
                     </View>
                 </View>
@@ -63,10 +67,10 @@ export default () => {
                 <View className="h-[2] bg-gray-200 w-full rounded-full"/>
                 <View className="py-5 gap-2">  
                     <SettingButton
-                        icon="ios-chatbox"
+                        icon="chatbox"
                         title="Postingan Saya"
                         iconColor="#323232"
-                        onPress={undefined}                      
+                        onPress={() => navigation.replace(ROUTES.SETTING_MYPOST)}                   
                     />
                     <SettingButton
                         icon="bookmarks"
@@ -84,7 +88,7 @@ export default () => {
                         onPress={undefined}                    
                     />
                     <SettingButton
-                        icon="ios-exit"
+                        icon="exit"
                         title="Keluar"
                         iconColor="#B63838"
                         onPress={signOut}                   

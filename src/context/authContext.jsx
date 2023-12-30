@@ -83,7 +83,7 @@ useEffect(() => { GoogleSignin.configure(
       const signedInUser = result.user;
       setUser(signedInUser);
       // console.log('Login Sukses');
-console.log(signedInUser);
+      console.log(signedInUser);
       handleLoginSuccess(email, password);
       navigation.navigate(ROUTES.MODUL)
     } catch (error) {
