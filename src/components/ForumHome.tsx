@@ -1,12 +1,15 @@
 
 import { NativeWindStyleSheet } from "nativewind";
 import { useEffect, useState } from "react";
-import { View, Text, Image, Pressable, FlatList } from "react-native";
+import { View, Text, Image, Pressable, FlatList, RefreshControl, SafeAreaView } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { ToastProvider } from 'react-native-toast-notifications'
 import { UserAuth } from "../context/authContext";
 import axios from 'axios';
 import ForumPost from "../components/ForumPost";
+import API from "../../api.json";
+import { useNavigation } from "@react-navigation/native";
+import ROUTES from "../constans/routes";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -35,42 +38,67 @@ interface ForumData {
 export default () => {
     const {user} = UserAuth();
     const [forumData, setForumData] = useState<ForumData[]>([]);
+    const [refreshing, setRefreshing] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [isLiked, setIsLiked] = useState(false);
+    
     // const photoURL = user?.photoURL || '';
 
-    const fetchData = async (page: number | undefined) => {
-        try {
-            const url = 'https://rest-api-zzvthujxxq-as.a.run.app/api/forum/page?page=${page}';
+    // const fetchData = async (page: number | undefined) => {
+    //     try {
+    //         const url = API.address + '/api/forum/page?page=${page}';
     
-            const response = await axios.get(url);
-            if (response.status === 200) {
-                const { forumData, currentPage, totalPages } = response.data;
-                console.log(forumData);
-                // Set data forum, nomor halaman saat ini, dan jumlah total halaman
-                setForumData(forumData);
-                setCurrentPage(currentPage);
-                setTotalPages(totalPages);
-            } else {
-                console.error('Gagal mengambil data:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Gagal mengambil data:', error);
-        }   
-    };
-    
+    //         const response = await axios.get(url);
+    //         if (response.status === 200) {
+    //             const { forumData, currentPage, totalPages } = response.data;
+    //             console.log(forumData);
+    //             // Set data forum, nomor halaman saat ini, dan jumlah total halaman
+    //             setForumData(forumData);
+    //             setCurrentPage(currentPage);
+    //             setTotalPages(totalPages);
+    //         } else {
+    //             console.error('Gagal mengambil data:', response.statusText);
+    //         }
+    //     } catch (error) {
+    //         console.error('Gagal mengambil data:', error);
+    //     }   
+    // };
     useEffect(() => {
         // Memanggil fetchData untuk mengambil data awal
         fetchData(currentPage);
     }, [currentPage]);
 
+    const fetchData = async (page: number | undefined) => {
+        try {
+            fetch(API.address + '/api/forum/page?page=${page}')
+            .then((response) => response.json())
+            .then((responJson)=>{
+                setForumData(responJson.forumData);
+                setCurrentPage(responJson.currentPage);
+                setTotalPages(responJson.totalPages);
+                setRefreshing(false);
+            })
+        } catch (error) {
+            console.error('Gagal mengambil data:', error);
+        }
+    };
+    
+
+    const onRefresh = () => {
+        //Clear old data of the list
+        setForumData([]);
+        //Call the Service to get the latest data
+        fetchData(currentPage);
+    };
+
     const currentForumData = forumData;
+    const navigation = useNavigation();
     
     return (
         <ToastProvider>
         <View className="flex-1 items-center bg-[#EBEBEB] ">
-            <ScrollView className="w-full">
+            <SafeAreaView className="w-full mb-[70]">
                 <View className=" w-full justify-center items-center bg-white px-4 py-2 mt-2" >
                     {/* <Image
                         source={require('../assets/images/profile-1.jpeg')}
@@ -78,7 +106,7 @@ export default () => {
                     /> */}
                     <Pressable
                         className=" rounded-md w-full border border-gray-400 justify-center  bg-white h-10"
-                        onPress={undefined}   
+                        onPress={() => navigation.navigate(ROUTES.ASK_FORUM)}    
                     >
                         <Text className="text-gray-400 ml-5 " >
                             Tanyakan sesuatu disini....
@@ -86,6 +114,12 @@ export default () => {
                     </Pressable>
                 </View>
                 <FlatList
+                    refreshControl={
+                        <RefreshControl 
+                            refreshing={refreshing} 
+                            onRefresh={onRefresh} 
+                        />
+                    }
                     data={currentForumData}
                     renderItem={({ item }) => (
                         <ForumPost
@@ -96,11 +130,12 @@ export default () => {
                             titlePost={item.data.title}
                             descPost={item.data.topics}
                             onPress={undefined}  
-                            imagePost={undefined}       
+                            imagePost={undefined}   
+                            verified={true}    
                         />
                     )}
                 />
-            </ScrollView>
+            </SafeAreaView>
         </View>
         </ToastProvider>
     );

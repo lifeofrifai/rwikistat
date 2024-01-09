@@ -14,11 +14,10 @@ NativeWindStyleSheet.setOutput({
 
 export default () => {
     const navigation = useNavigation();
-    const {user, logOut} = UserAuth();
+    // const {user, logOut} = UserAuth();
     const photoURL = user?.photoURL || '';
     const [loading, setLoading] = useState(true);
     
-    const navigation = useNavigation();
 
     const signOut = () => {
         auth()
@@ -70,13 +69,13 @@ export default () => {
                         icon="chatbox"
                         title="Postingan Saya"
                         iconColor="#323232"
-                        onPress={() => navigation.replace(ROUTES.SETTING_MYPOST)}                   
+                        onPress={() => navigation.navigate(ROUTES.SETTING_MYPOST)}                   
                     />
                     <SettingButton
                         icon="bookmarks"
                         title="Tersimpan"
                         iconColor="#323232"
-                        onPress={undefined}                    
+                        onPress={() => navigation.navigate(ROUTES.SETTING_BOOKMARK)}                        
                     />
                 </View>
                 <View className="h-[2] bg-gray-200 w-full rounded-full"/>
@@ -85,7 +84,7 @@ export default () => {
                         icon="information-circle"
                         title="Tentang RwikiStat"
                         iconColor="#323232"
-                        onPress={undefined}                    
+                        onPress={() => navigation.navigate(ROUTES.SETTING_ABOUT)}                    
                     />
                     <SettingButton
                         icon="exit"

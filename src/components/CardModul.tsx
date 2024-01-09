@@ -16,7 +16,7 @@ const CardModul = ({
     return(
         <Pressable
                 onPress={onPress}
-                className="mb-5"
+                className="mb-2 mt-3"
             >
             <LinearGradient
                 colors={['#38B68D', '#00726B']}

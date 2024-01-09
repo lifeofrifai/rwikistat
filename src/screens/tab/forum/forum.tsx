@@ -1,5 +1,5 @@
-import { AuthContextProvider } from '../../context/authContext';
-import ForumHome from '../../components/ForumHome';
+import { AuthContextProvider } from '../../../context/authContext';
+import ForumHome from '../../../components/ForumHome';
 
 
 import { NativeWindStyleSheet } from "nativewind";

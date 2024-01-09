@@ -4,6 +4,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import LikedButton from "./button/card-button/LikedButton";
 import Comment from "./button/card-button/Comment";
 import BookmarkButton from "./button/card-button/BookmarkButton";
+import MaterialIcons  from "react-native-vector-icons/MaterialIcons";
 
 
 interface ForumPost{
@@ -14,6 +15,7 @@ interface ForumPost{
     descPost: any,
     onPress: any,
     imagePost: any,
+    verified: boolean,
 }
 
 const ForumPost = ({
@@ -23,7 +25,8 @@ const ForumPost = ({
     titlePost,
     descPost,
     onPress,
-    imagePost
+    imagePost,
+    verified
 }:ForumPost) => {
 
     const toast = useToast();
@@ -39,9 +42,12 @@ const ForumPost = ({
                         className="w-11 h-11 rounded-md"
                     />
                     <View className="justify-center ml-3">
-                        <Text className="font-bold text-gray-700 text-base">
-                            {namePost}
-                        </Text>
+                        <View className="flex-row items-center">
+                            <Text className="font-bold text-gray-700 text-base">
+                                {namePost}
+                            </Text>
+                            {verified ? (<MaterialIcons name="verified" size={18} color={"#00726B"} className="ml-3"/>) : ("")  }
+                        </View>
                         <Text className="text-gray-400 text-xs">
                             {timePost}
                         </Text>

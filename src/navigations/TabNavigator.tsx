@@ -1,18 +1,21 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import ModulScreen from '../screens/tab/modul';
+import ModulScreen from '../screens/tab/modul/modul';
 import SettingsScreen from '../screens/tab/settings/setting';
-import CompilerScreen from '../screens/tab/compiler';
-import ForumScreen from '../screens/tab/forum';
+import CompilerScreen from '../screens/tab/compiler/compiler';
+import ForumScreen from '../screens/tab/forum/forum';
 import ROUTES from '../constans/routes';
 import {useNavigation} from '@react-navigation/native';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo  from 'react-native-vector-icons/Entypo';
+import { createStackNavigator } from '@react-navigation/stack';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Pressable } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
-function AuthNavigator() {
+function TabsNavigator() {
     const navigation = useNavigation();
 
     console.log(Tab);
@@ -25,7 +28,6 @@ function AuthNavigator() {
             },
             headerTitleStyle: {
                 color: "#00726B",
-                fontWeight: 'bold',
             },
             tabBarStyle: {
                 backgroundColor: "#fff",
@@ -39,6 +41,19 @@ function AuthNavigator() {
                 component={ModulScreen} 
                 options={{
                     tabBarIcon: ({ color }) => <MaterialIcons name="menu-book" size={26} color={color} />,
+                    headerRight: () => (
+                        <Pressable onPress={() => navigation.navigate(ROUTES.CHAT_BOT)} >
+                            {({pressed}) => (
+                                <Ionicons
+                                onPress={undefined}
+                                name="chatbox-ellipses"
+                                size={25}
+                                color={"#00726B"}
+                                style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                            />
+                            )}
+                        </Pressable>
+                    ),
                 }}
             />
             <Tab.Screen
@@ -63,7 +78,9 @@ function AuthNavigator() {
                 }}
             />
         </Tab.Navigator>
+
     );
 }
 
-export default AuthNavigator;
+
+export default TabsNavigator;
