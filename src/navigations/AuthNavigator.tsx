@@ -11,6 +11,7 @@ import OutputScreen from '../screens/tab/compiler/output';
 import ChatBotScreen from '../screens/tab/modul/chatBot';
 import ModulDetailScreen from '../screens/tab/modul/detailModul';
 import AskForumScreen from '../screens/tab/forum/askForum';
+import DetailForumScreen from '../screens/tab/forum/detailForum';
 
 const Stack = createStackNavigator();
 
@@ -38,6 +39,7 @@ function AuthNavigator() {
                 <Stack.Screen name={ROUTES.SETTING_ABOUT} component={AboutScreen} />
                 <Stack.Screen name={ROUTES.COMPILER_OUTPUT} component={OutputScreen} />
                 <Stack.Screen name={ROUTES.MODUL_DETAIL} component={ModulDetailScreen} />
+                <Stack.Screen name={ROUTES.DETAIL_FORUM} component={DetailForumScreen} />
             </Stack.Group>
             <Stack.Group screenOptions={{presentation: 'modal'}}>
                 <Stack.Screen name={ROUTES.CHAT_BOT} component={ChatBotScreen}/>

@@ -129,7 +129,7 @@ export default () => {
                             timePost="3 Hours Ago"
                             titlePost={item.data.title}
                             descPost={item.data.topics}
-                            onPress={undefined}  
+                            onPress={() => navigation.navigate(ROUTES.DETAIL_FORUM)}  
                             imagePost={undefined}   
                             verified={true}    
                         />

@@ -14,6 +14,7 @@ export default{
 
     FORUM: 'Forum',
     ASK_FORUM: 'Ask Forum',
+    DETAIL_FORUM: 'Detail Forum',
 
     SETTING: 'Pengaturan',
     SETTING_MYPOST: 'My Post',
