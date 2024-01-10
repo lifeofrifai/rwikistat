@@ -1,6 +1,6 @@
 import CodeEditor, { CodeEditorSyntaxStyles } from '@rivascva/react-native-code-editor';
 import { NativeWindStyleSheet } from "nativewind";
-import { View, Text, SafeAreaView, KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard, Button } from "react-native";
+import { View, Text, SafeAreaView, KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard, Button, Image } from "react-native";
 import { useKeyboard } from '@react-native-community/hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MiniPrimaryButton from "../../../components/button/MiniPrimaryButton";
@@ -14,6 +14,9 @@ import {
     type StackScreenProps,
   } from '@react-navigation/stack';
 import { useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import API from "../../../../api.json";
+import { ActionCodeURL } from 'firebase/auth/cordova';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -26,10 +29,51 @@ export default () => {
     const navigation = useNavigation();
 
     const [isModalVisible, setModalVisible] = useState(false);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [response, setResponse] = useState('');
+
+    const [code, setCode] = useState('#Write Your R Code Here # png("out.png", width = 800, height = 600)');
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
+
+    
+
+    const handleCompile = async () => {
+        try {
+            const userToken = await AsyncStorage.getItem('userToken');
+          const response = await fetch(API.address + '/api/compiler/test/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${userToken}`,
+            },
+            body: JSON.stringify({ code }),
+          });
+      
+        // Reset imageUrl to null before processing new response
+        setImageUrl(null);
+    
+        // Check if the response is an image
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('image/png')) {
+            // If it's an image, set the response as an image source
+            const newImageUrl = await response.text();
+            console.log(newImageUrl);
+            setImageUrl(newImageUrl);
+            setModalVisible(!isModalVisible);
+          } else {
+            // If it's not an image, set the response as text
+            const data = await response.text();
+            setResponse(data);
+            setModalVisible(!isModalVisible);
+          }
+        } catch (error) {
+          console.error(error);
+          setResponse('Terjadi kesalahan saat mengirim kode.');
+        }
+      };
 
     return (
         <SafeAreaView className="flex-1 bg-[#EBEBEB] ">
@@ -43,7 +87,7 @@ export default () => {
                     <MiniPrimaryButton
                         label="Compile"
                         icon="play-circle"
-                        onPress={toggleModal}    
+                        onPress={handleCompile}    
                         disabled={undefined}
                         loading={undefined}             
                     />
@@ -53,6 +97,12 @@ export default () => {
                         onSwipeComplete={toggleModal}
                     >
                         <View className=' justify-center items-center h-1/2 px-10 py-10 bg-white rounded-lg'>
+                            {/* Conditional rendering based on content type */}
+                            {imageUrl ? (
+                                <Image src={imageUrl} alt="Output" className="h-full p-5" />
+                            ) : (
+                                <Text className="p-5 ">{response}</Text>
+                            )} 
                             <View>
                                 <Button title="Hide modal" onPress={toggleModal} />
                             </View>
@@ -72,9 +122,11 @@ export default () => {
                             ? { marginBottom: keyboard.keyboardHeight - insets.bottom }
                             : {}),
                     }}
+                    onChange={(newCode) => setCode(newCode)}
                     language= 'r'
                     syntaxStyle={CodeEditorSyntaxStyles.atomOneLight}
                     showLineNumbers
+                    initialValue='#Write Your R Code Here # png("out.png", width = 800, height = 600)'
                 />
             </View>
         </TouchableWithoutFeedback>

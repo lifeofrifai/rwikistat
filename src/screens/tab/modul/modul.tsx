@@ -6,6 +6,8 @@ import CardModul from "../../../components/CardModul";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import ROUTES from "../../../constans/routes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import auth from '@react-native-firebase/auth';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -29,8 +31,15 @@ export default () => {
         fetchData();
     }, []);
 
+
     const fetchData = async () => {
-        fetch(API.address + '/api/modul')
+        const userToken = await AsyncStorage.getItem('userToken');
+        console.log("token",userToken);
+        fetch(API.address + '/api/modul', {
+            headers: {
+                Authorization: `Bearer ${userToken}`,
+            },
+        })
             .then((response) => response.json())
             .then((responJson)=>{
                 setTestData(responJson);
