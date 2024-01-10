@@ -58,7 +58,7 @@ const ForumPost = ({
                     </View>
                 </View>
                 <Ionicons
-                    onPress={() => toast.show("Link Copied", { duration: 2000, type: "success" })}
+                    onPress={() => toast.show("Link Postingan disalin", { duration: 2000, type: "success" })}
                     name={"link"}
                     size={20}
                     color={"black"}
@@ -81,11 +81,13 @@ const ForumPost = ({
             </Pressable>
             <View className="h-[1] bg-gray-200 w-full rounded-full"/>
             <View className="flex-row  py-2 items-center justify-between" >
-                <View className="flex-row">
+                <View className="flex-row ">
                     <LikedButton itemId={id}/>
-                    <Text className="text-gray-400 text-xs">
-                        {likes}
-                    </Text>
+                    <View className="ml-1 justify-center  mr-2">
+                        <Text className="text-gray-400 text-xs ">
+                            {likes}
+                        </Text>
+                    </View>
                     <Comment/>
                 </View>
                 <View className="flex-row items-center">

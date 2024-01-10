@@ -3,6 +3,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import auth, { firebase } from '@react-native-firebase/auth';
 import API from "../../../../api.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useToast } from "react-native-toast-notifications";
 
 const BookmarkButton:React.FC<{ itemId: string }> =({ itemId }) =>{
     const [bookmarkButton, setBookmarkButton] = React.useState(false);
@@ -67,6 +68,7 @@ const BookmarkButton:React.FC<{ itemId: string }> =({ itemId }) =>{
                     console.log('API Response:', responJson);
                     setBookmarkButton(true);
                     setIsLoading(false);
+                    toast.show("Menyimpan Postingan", { duration: 2000, type: "success" })
                 })
               } else {
                 // Pengguna belum masuk, jangan lakukan apa-apa
@@ -106,6 +108,7 @@ const BookmarkButton:React.FC<{ itemId: string }> =({ itemId }) =>{
                       console.log('API Response:', responJson);
                       setBookmarkButton(false);
                       setIsLoading(false);
+                      toast.show("Batal Menyimpan Postingan", { duration: 2000, type: "success" })
                   })
                 } else {
                   // Pengguna belum masuk, jangan lakukan apa-apa
@@ -121,6 +124,7 @@ const BookmarkButton:React.FC<{ itemId: string }> =({ itemId }) =>{
 
     // Determine the handler based on whether the post is liked or not
     const onPressHandler = bookmarkButton ? handleUnbookmark : handleBookmark;
+    const toast = useToast();
 
     return(
         <Ionicons

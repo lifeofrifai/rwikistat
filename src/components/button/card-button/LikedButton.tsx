@@ -4,6 +4,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import auth, { firebase } from '@react-native-firebase/auth';
 import API from "../../../../api.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useToast } from "react-native-toast-notifications";
 
 const LikedButton: React.FC<{ itemId: string }> =({ itemId }) =>{
     const [likedButton, setLikedButton] = React.useState(false);
@@ -68,6 +69,7 @@ const LikedButton: React.FC<{ itemId: string }> =({ itemId }) =>{
                     console.log('API Response:', responJson);
                     setLikedButton(true);
                     setIsLoading(false);
+                    toast.show("Postingan Disukai", { duration: 2000, type: "success" })
                 })
               } else {
                 // Pengguna belum masuk, jangan lakukan apa-apa
@@ -107,6 +109,7 @@ const LikedButton: React.FC<{ itemId: string }> =({ itemId }) =>{
                       console.log('API Response:', responJson);
                       setLikedButton(false);
                       setIsLoading(false);
+                      toast.show("Batal Menyukai Postingan", { duration: 2000, type: "success" })
                   })
                 } else {
                   // Pengguna belum masuk, jangan lakukan apa-apa
@@ -122,13 +125,18 @@ const LikedButton: React.FC<{ itemId: string }> =({ itemId }) =>{
 
     // Determine the handler based on whether the post is liked or not
     const onPressHandler = likedButton ? handleUnlike : handleLike;
-
+    const toast = useToast();
     return(
-        <View className="flex-row items-center mr-3">
+        
+
+        <View className="flex-row items-center">
             <AntDesign
                 // onPress={() => setLikedButton((isLiked) => !isLiked)}
                 // onPress={() => handleUnlike(itemId)}
-                onPress={() => onPressHandler(itemId)}
+                onPress={() => {
+                  onPressHandler(itemId)
+                  
+                }}
                 name={likedButton ? "like1" :  "like2"}
                 size={24}
                 color={likedButton ? "#00726B" : "black"}

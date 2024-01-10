@@ -13,18 +13,13 @@ export default{
     COMPILER_OUTPUT: 'Compiler Output',
 
     FORUM: 'Forum',
-    ASK_FORUM: 'Ask Forum',
+    ASK_FORUM: 'Tanyakan Sesuatu',
     DETAIL_FORUM: 'Detail Forum',
 
     SETTING: 'Pengaturan',
-    SETTING_MYPOST: 'My Post',
-    SETTING_BOOKMARK: 'Bookmark',
-    SETTING_ABOUT: 'About',
-
-
-
-
-    
+    SETTING_MYPOST: 'Postingan Saya',
+    SETTING_BOOKMARK: 'Tersimpan',
+    SETTING_ABOUT: 'Tentang Rwikistat',
 
 
 }

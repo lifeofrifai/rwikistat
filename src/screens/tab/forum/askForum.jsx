@@ -3,14 +3,58 @@ import { View, Text, ScrollView, KeyboardAvoidingView, Platform, TouchableWithou
 import SecondaryButton from "../../../components/button/SecondaryButton";
 import PrimaryButton from "../../../components/button/PrimaryButton";
 import { useState } from "react";
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
 });
 
 export default () => {
-    const [image, setImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
 
+    const openImagePicker = () => {
+        const options = {
+            mediaType: 'photo',
+            includeBase64: false,
+            maxHeight: 2000,
+            maxWidth: 2000,
+        };
+    
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('Image picker error: ', response.error);
+            } else {
+                let imageUri = response.uri || response.assets?.[0]?.uri;
+                setSelectedImage(imageUri);
+                console.log('imageUri', imageUri);
+            }
+        });
+    };
+
+    const handleCameraLaunch = () => {
+        const options = {
+          mediaType: 'photo',
+          includeBase64: false,
+          maxHeight: 2000,
+          maxWidth: 2000,
+        };
+      
+        launchCamera(options, response => {
+          console.log('Response = ', response);
+          if (response.didCancel) {
+            console.log('User cancelled camera');
+          } else if (response.error) {
+            console.log('Camera Error: ', response.error);
+          } else {
+            // Process the captured image
+            let imageUri = response.uri || response.assets?.[0]?.uri;
+            setSelectedImage(imageUri);
+            console.log(imageUri);
+          }
+        });
+      }
 
     return (
         <View className="flex-1 bg-[#EBEBEB]">
@@ -45,8 +89,8 @@ export default () => {
                 Jelaskan masalah anda sesuai dengan judul
                 </Text>
                 <TextInput
-
                     className="flex-row w-full rounded-xl border justify-between h-28 items-center border-gray-400 p-3"
+                    
                     placeholder="Topik"
                     placeholderTextColor="#aaa"
                     multiline
@@ -57,15 +101,30 @@ export default () => {
             <View className='mt-5'>
                 <SecondaryButton
                     className="bg-gray-200"
-                    label="Tambahkan Foto"
+                    label="Tambahkan Foto Dari Kamera"
                     icon="photo"
-                    onPress={undefined} 
+                    onPress={handleCameraLaunch} 
+                    disabled={undefined} 
+                    loading={undefined}
+                />
+                <SecondaryButton
+                    className="bg-gray-200"
+                    label="Tambahkan Foto Dari Galeri"
+                    icon="photo"
+                    onPress={openImagePicker} 
                     disabled={undefined} 
                     loading={undefined}
                 />
             </View>
             <View className='items-center'>
-                {image && <Image source={{ uri: image }} style={{ width: 200, height: 200, marginTop: 15 }} />}
+                {/* {image && <Image source={{ uri: image }} style={{ width: 200, height: 200, marginTop: 15 }} />} */}
+                {selectedImage && (
+                    <Image
+                        source={{ uri: selectedImage }}
+                        style={{ width: 200, height: 200, marginTop: 15 }}
+                        resizeMode="contain"
+                    />
+                )}
             </View>
             <View className='mt-5'>
                 <PrimaryButton

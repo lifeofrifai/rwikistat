@@ -17,6 +17,7 @@ import { useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../../../api.json";
 import { ActionCodeURL } from 'firebase/auth/cordova';
+import { ScrollView } from 'react-native-gesture-handler';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -38,7 +39,6 @@ export default () => {
         setModalVisible(!isModalVisible);
     };
 
-    
 
     const handleCompile = async () => {
         try {
@@ -63,17 +63,18 @@ export default () => {
             console.log(newImageUrl);
             setImageUrl(newImageUrl);
             setModalVisible(!isModalVisible);
-          } else {
+        } else {
             // If it's not an image, set the response as text
             const data = await response.text();
             setResponse(data);
             setModalVisible(!isModalVisible);
-          }
-        } catch (error) {
-          console.error(error);
-          setResponse('Terjadi kesalahan saat mengirim kode.');
         }
-      };
+        } catch (error) {
+            console.error(error);
+            setResponse('Terjadi kesalahan saat mengirim kode.');
+        }
+    };
+
 
     return (
         <SafeAreaView className="flex-1 bg-[#EBEBEB] ">
@@ -93,20 +94,20 @@ export default () => {
                     />
                     <Modal
                         isVisible={isModalVisible}
-                        swipeDirection={['up', 'left', 'right', 'down']}
+                        swipeDirection={['left', 'right']}
                         onSwipeComplete={toggleModal}
                     >
-                        <View className=' justify-center items-center h-1/2 px-10 py-10 bg-white rounded-lg'>
+                        <ScrollView 
+                            className='h-1/2 px-2 py-3 bg-white rounded-lg'
+                        >
+                            <Text className='text-center text-mainGreen text-lg font-medium'>Output</Text>
                             {/* Conditional rendering based on content type */}
                             {imageUrl ? (
                                 <Image src={imageUrl} alt="Output" className="h-full p-5" />
                             ) : (
-                                <Text className="p-5 ">{response}</Text>
-                            )} 
-                            <View>
-                                <Button title="Hide modal" onPress={toggleModal} />
-                            </View>
-                        </View>
+                                <Text className="text-green-600">{response}</Text>
+                            )}
+                        </ScrollView>
                     </Modal>
                 </View>
                 <CodeEditor
