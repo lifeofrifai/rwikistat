@@ -16,6 +16,8 @@ interface ForumPost{
     onPress: any,
     imagePost: any,
     verified: boolean,
+    id:any
+    likes: any
 }
 
 const ForumPost = ({
@@ -26,7 +28,9 @@ const ForumPost = ({
     descPost,
     onPress,
     imagePost,
-    verified
+    verified,
+    id,
+    likes
 }:ForumPost) => {
 
     const toast = useToast();
@@ -78,11 +82,14 @@ const ForumPost = ({
             <View className="h-[1] bg-gray-200 w-full rounded-full"/>
             <View className="flex-row  py-2 items-center justify-between" >
                 <View className="flex-row">
-                    <LikedButton/>
+                    <LikedButton itemId={id}/>
+                    <Text className="text-gray-400 text-xs">
+                        {likes}
+                    </Text>
                     <Comment/>
                 </View>
                 <View className="flex-row items-center">
-                    <BookmarkButton/>
+                    <BookmarkButton itemId={id}/>
                 </View>
             </View>
         </View>

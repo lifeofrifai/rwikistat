@@ -6,7 +6,7 @@ import auth from '@react-native-firebase/auth';
 import { UserAuth } from '../context/authContext';
 import {useNavigation} from '@react-navigation/native';
 import ROUTES from "../constans/routes";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -19,12 +19,18 @@ export default () => {
     const [loading, setLoading] = useState(true);
     
 
-    const signOut = () => {
-        auth()
-        .signOut()
-        .then(() => console.log('User signed out!'));
-        navigation.navigate(ROUTES.SIGN_IN)
-    }
+    const signOut = async () => {
+        try {
+          await auth().signOut();
+          
+          await AsyncStorage.removeItem('userToken');
+          console.log('User signed out!');
+          navigation.navigate(ROUTES.SIGN_IN);
+        } catch (error) {
+          console.error('Error signing out:', error);
+        }
+      };
+      
 
     // Set an initializing state whilst Firebase connects
     const [initializing, setInitializing] = useState(true);
@@ -49,7 +55,7 @@ export default () => {
                 
                 <View className="flex-row gap-x-3 py-5">
                     <Image
-                        source={undefined}
+                        source={photoURL}
                         className="w-[70] h-[70] rounded-md"
                     />
                     <View className="justify-center">

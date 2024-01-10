@@ -8,6 +8,7 @@ import ROUTES from "../constans/routes";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { GoogleSignin,statusCodes } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default () => {
@@ -29,13 +30,15 @@ export default () => {
         await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
         // Get the users ID token
         const { idToken,user } = await GoogleSignin.signIn();
-        console.log(user.UserId)
+        console.log("token user",idToken)
         // Alert.alert("Berhasil Masuk")
         navigation.navigate(ROUTES.MODUL)
       
         // Create a Google credential with the token
         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
+        
+        // Simpan token ke AsyncStorage
+        await AsyncStorage.setItem('userToken', idToken);
       
         // Sign-in the user with the credential
         return auth().signInWithCredential(googleCredential);

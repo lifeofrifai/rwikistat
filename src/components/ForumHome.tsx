@@ -10,6 +10,7 @@ import ForumPost from "../components/ForumPost";
 import API from "../../api.json";
 import { useNavigation } from "@react-navigation/native";
 import ROUTES from "../constans/routes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -45,25 +46,6 @@ export default () => {
     
     // const photoURL = user?.photoURL || '';
 
-    // const fetchData = async (page: number | undefined) => {
-    //     try {
-    //         const url = API.address + '/api/forum/page?page=${page}';
-    
-    //         const response = await axios.get(url);
-    //         if (response.status === 200) {
-    //             const { forumData, currentPage, totalPages } = response.data;
-    //             console.log(forumData);
-    //             // Set data forum, nomor halaman saat ini, dan jumlah total halaman
-    //             setForumData(forumData);
-    //             setCurrentPage(currentPage);
-    //             setTotalPages(totalPages);
-    //         } else {
-    //             console.error('Gagal mengambil data:', response.statusText);
-    //         }
-    //     } catch (error) {
-    //         console.error('Gagal mengambil data:', error);
-    //     }   
-    // };
     useEffect(() => {
         // Memanggil fetchData untuk mengambil data awal
         fetchData(currentPage);
@@ -71,7 +53,12 @@ export default () => {
 
     const fetchData = async (page: number | undefined) => {
         try {
-            fetch(API.address + '/api/forum/page?page=${page}')
+            const userToken = await AsyncStorage.getItem('userToken');
+            fetch(API.address + '/api/forum/page?page=${page}', {
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+            })
             .then((response) => response.json())
             .then((responJson)=>{
                 setForumData(responJson.forumData);
@@ -131,7 +118,9 @@ export default () => {
                             descPost={item.data.topics}
                             onPress={() => navigation.navigate(ROUTES.DETAIL_FORUM)}  
                             imagePost={undefined}   
-                            verified={true}    
+                            verified={true}
+                            id={item.id}
+                            likes={item.data.likes}    
                         />
                     )}
                 />
