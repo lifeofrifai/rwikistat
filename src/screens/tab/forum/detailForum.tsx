@@ -175,7 +175,7 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
                 titlePost={detailForum.data.title}
                 descPost={detailForum.data.topics}
                 onPress={undefined}
-                imagePost={undefined}
+                imagePost={detailForum.data.images}
                 verified={false} 
                 likes={detailForum.data.likes} 
                 id={undefined}               

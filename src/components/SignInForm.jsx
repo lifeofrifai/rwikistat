@@ -9,6 +9,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { GoogleSignin,statusCodes } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useToast, ToastProvider } from "react-native-toast-notifications";
 
 
 export default () => {
@@ -73,12 +74,16 @@ export default () => {
             navigation.navigate(ROUTES.MODUL)
         })
         .catch(err=>{
+            toast.show("Password atau NIM Salah", { duration: 2000, type: "danger" })
             console.log(err)
             Alert.alert(err.nativeErrorMessage)
         })
     };
+
+    const toast = useToast();
     
     return (
+        <ToastProvider>
         <SafeAreaView className="flex-1 justify-center bg-white">
         <StatusBar style="dark" />
         <KeyboardAvoidingView
@@ -92,7 +97,7 @@ export default () => {
                         className="text-mainGreen font-bold"
                         style={{fontSize: 45, lineHeight: 43}}
                     >
-                        Selamat Datang Statistikawan
+                        Selamat Datang Statistikawanasas
                     </Text>
                     <Text className=" text-gray-400 text-base">
                     Hallo 👋 ayo semangat belajar!
@@ -160,5 +165,6 @@ export default () => {
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
         </SafeAreaView>
+        </ToastProvider>
     )
 }

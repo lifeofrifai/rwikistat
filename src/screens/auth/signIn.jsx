@@ -9,6 +9,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { GoogleSignin,statusCodes } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useToast, ToastProvider } from "react-native-toast-notifications";
 
 
 export default () => {
@@ -110,16 +111,21 @@ export default () => {
               })
               .catch((error) => {
                 console.error("Error getting user token:", error);
+                toast.show("Password atau NIM Salah", { duration: 2000, type: "success" })
                 // Handle error
               });
           })
           .catch((error) => {
-            console.error("Error signing in:", error);
+            console.error("Error signing in (salah):", error);
             Alert.alert(error.nativeErrorMessage);
+            toast.show("Password atau NIM Salah", { duration: 2000, type: "success" })
           });
       };
+
+      const toast = useToast();
     
     return (
+        <ToastProvider>
         <SafeAreaView className="flex-1 justify-center bg-white">
         <StatusBar style="dark" />
         <KeyboardAvoidingView
@@ -201,5 +207,6 @@ export default () => {
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
         </SafeAreaView>
+        </ToastProvider>
     )
 }

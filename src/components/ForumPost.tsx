@@ -75,7 +75,9 @@ const ForumPost = ({
                     {descPost}
                 </Text>
                 <Image
-                    source={imagePost}
+                    source={{
+                        uri: imagePost
+                    }}
                     className="w-full"
                 />
             </Pressable>

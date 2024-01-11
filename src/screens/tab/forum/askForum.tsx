@@ -7,6 +7,7 @@ import { useState, FormEvent } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../../../api.json";
 import auth, { firebase } from '@react-native-firebase/auth';
+import ImagePicker, { Image as ImageType } from 'react-native-image-crop-picker';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -40,13 +41,17 @@ interface NewPost {
 }
 
 export default () => {
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<string | null>(null);
+  // const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [width, setWidth] = useState<number>(500);
+  const [height, setHeight] = useState<number>(500);
   const [newPost, setNewPost] = useState<NewPost>({
     topics: "",
     title: "",
     images: [],
     userId: '',
   }); 
+
 
   const handleInputChange = (name: string, value: string) => {
     setNewPost({
@@ -55,17 +60,23 @@ export default () => {
     });
   };
 
-  // const handleImageChange = async () => {
-  //   const result = await ImagePicker.launchImageLibraryAsync();
-
-  //   if (!result.canceled) {
-  //     setNewPost({
-  //       ...newPost,
-  //       images: [...newPost.images, result.uri],
-  //     });
-  //     setImage(result.uri);
-  //   }
-  // };
+  const handleImagePicker = () => {
+    ImagePicker.openPicker({
+      width,
+      height,
+      cropping: true,
+    })
+      .then((image: ImageType) => {
+        setImage(image.path);
+        setHeight(height);
+        setWidth(width);
+        console.log('gambari',image);
+        console.log(setImage)
+      })
+      .catch((error: Error) => {
+        console.log(error);
+      });
+  };
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -75,8 +86,13 @@ export default () => {
           formData.append('topics', newPost.topics);
           formData.append('title', newPost.title);
           formData.append('userId',user?.uid);
-          newPost.images.forEach((image) => {
-            formData.append('images', image);
+             newPost.images.forEach((image, index) => {
+            // Append each image file with a unique key (e.g., 'images[0]', 'images[1]', etc.)
+            formData.append(`images[${index}]`, {
+              uri: image,
+              type: 'image/jpeg', // You may need to adjust the file type based on your requirements
+              name: `image_${index}.jpg`, // You can provide a custom name or use the original file name
+            } as unknown as Blob);
           });
           console.log(formData);
 
@@ -89,12 +105,6 @@ export default () => {
             },
             body: formData,
           });
-    
-    
-          
-            // Refresh data setelah berhasil menambahkan postingan
-            // fetchData();
-            // Reset formulir setelah berhasil menambahkan postingan
             console.log(response)
             setNewPost({
               topics: '',
@@ -107,6 +117,10 @@ export default () => {
           console.error('Gagal menambahkan postingan:', error);
         }
       };
+
+ 
+      
+
 
     
     // const [selectedImage, setSelectedImage] = useState(null);
@@ -203,32 +217,31 @@ export default () => {
                 />
             </View>
             <View className='mt-5'>
-                <SecondaryButton
+                {/* <SecondaryButton
                     className="bg-gray-200"
                     label="Tambahkan Foto Dari Kamera"
                     icon="photo"
                     onPress={undefined}
                     disabled={undefined} 
                     loading={undefined}
-                />
+                /> */}
                 <SecondaryButton
                     className="bg-gray-200"
                     label="Tambahkan Foto Dari Galeri"
                     icon="photo"
-                    onPress={undefined} 
+                    onPress={handleImagePicker} 
                     disabled={undefined} 
                     loading={undefined}
                 />
             </View>
             <View className='items-center'>
                 {/* {image && <Image source={{ uri: image }} style={{ width: 200, height: 200, marginTop: 15 }} />} */}
-                {/* {selectedImage && (
+                {image && (
                     <Image
-                        source={{ uri: selectedImage }}
+                        source={{ uri: image }}
                         style={{ width: 200, height: 200, marginTop: 15 }}
-                        resizeMode="contain"
                     />
-                )} */}
+                )}
             </View>
             <View className='mt-5'>
                 <PrimaryButton

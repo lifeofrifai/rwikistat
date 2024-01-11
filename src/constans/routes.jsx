@@ -5,7 +5,7 @@ export default{
     HOME: 'Home',
 
     MODUL: 'Materi',
-    MODUL_DETAIL: 'Materi Detail',
+    MODUL_DETAIL: 'Baca Materi',
     CHAT_BOT: 'Chat Bot',
 
 

@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../../../api.json";
 import Modal from "react-native-modal";
+import { createStackNavigator } from "@react-navigation/stack";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -35,6 +36,7 @@ const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
         );
       }
     const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
+    const Stack = createStackNavigator();
     const keyboard = useKeyboard();
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
@@ -51,6 +53,7 @@ const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
+
 
     const handleCompile = async () => {
         try {
@@ -137,11 +140,11 @@ const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
                         disabled={undefined}
                         loading={undefined}             
                     />
-                    {detailModul ? (
+                    {/* {detailModul ? (
                     <Text>{detailModul.data.namaModul}</Text>
                     ) : (
                         <Text>Loading...</Text>
-                    )}
+                    )} */}
                     <Modal
                         isVisible={isModalVisible}
                         swipeDirection={['left', 'right']}
@@ -160,25 +163,29 @@ const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
                         </ScrollView>
                     </Modal>
                 </View>
-                <CodeEditor
-                    style={{
-                        ...{
-                            fontSize: 14,
-                            inputLineHeight: 26,
-                            highlighterLineHeight: 26,
-                            lineNumbersColor:"#00726B",
-                            width: "100%",
-                        },
-                        ...(keyboard.keyboardShown
-                            ? { marginBottom: keyboard.keyboardHeight - insets.bottom }
-                            : {}),
-                    }}
-                    onChange={(newCode) => setCode(newCode)}
-                    language= 'r'
-                    syntaxStyle={CodeEditorSyntaxStyles.atomOneLight}
-                    showLineNumbers
-                    initialValue='#Write Your R Code Here # png("out.png", width = 800, height = 600)'
-                />
+                {detailModul ? (
+                    <CodeEditor
+                        style={{
+                            ...{
+                                fontSize: 14,
+                                inputLineHeight: 26,
+                                highlighterLineHeight: 26,
+                                lineNumbersColor:"#00726B",
+                                width: "100%",
+                            },
+                            ...(keyboard.keyboardShown
+                                ? { marginBottom: keyboard.keyboardHeight - insets.bottom }
+                                : {}),
+                        }}
+                        onChange={(newCode) => setCode(newCode)}
+                        language= 'r'
+                        syntaxStyle={CodeEditorSyntaxStyles.atomOneLight}
+                        showLineNumbers
+                        initialValue={detailModul.data.codeSampel}
+                    />
+                    ) : (
+                        <Text>No Code Data</Text>
+                    )}
             </View>
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
