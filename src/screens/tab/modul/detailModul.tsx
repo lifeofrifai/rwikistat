@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useKeyboard } from "@react-native-community/hooks";
 import CodeEditor, { CodeEditorSyntaxStyles } from '@rivascva/react-native-code-editor';
 import  ROUTES  from "../../../constans/routes";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../../../api.json";
 import Modal from "react-native-modal";
@@ -16,7 +16,24 @@ NativeWindStyleSheet.setOutput({
     default: "native",
 });
 
-export default () => {
+interface DetailModulScreenProps {
+    route: {
+      params?: {
+        id?: string;
+      };
+    };
+  }
+
+const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
+    const modulId = route.params?.id;
+    if (modulId === undefined) {
+        // Handle the case where id is not available
+        return (
+          <View>
+            <Text>Id is not available</Text>
+          </View>
+        );
+      }
     const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
     const keyboard = useKeyboard();
     const insets = useSafeAreaInsets();
@@ -25,6 +42,9 @@ export default () => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [response, setResponse] = useState('');
+    const [detailModul, setDetailModul] = useState<any>(null);
+    const [pdfUrl, setPdfUrl] = useState('');
+    const [refreshing, setRefreshing] = useState(true);
 
     const [code, setCode] = useState('#Write Your R Code Here # png("out.png", width = 800, height = 600)');
 
@@ -35,7 +55,7 @@ export default () => {
     const handleCompile = async () => {
         try {
             const userToken = await AsyncStorage.getItem('userToken');
-          const response = await fetch(API.address + '/api/compiler/test/', {
+            const response = await fetch(API.address + '/api/compiler/test/', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -67,12 +87,39 @@ export default () => {
         }
     };
 
+    useEffect(() => {
+        fetchData();
+    }, [modulId]);
+
+    const fetchData = async () => {
+        if (modulId) {
+          // Mendapatkan token dari localStorage atau sumber lainnya
+          const userToken = await AsyncStorage.getItem('userToken');
+            
+          fetch(API.address + `/api/modul/${modulId}`, {
+            headers: {
+                Authorization: `Bearer ${userToken}`,
+            },
+            })
+                .then((response) => response.json())
+                .then((responJson)=>{
+                    setDetailModul(responJson);
+                    setPdfUrl(responJson.data.pdfPath);
+                    setRefreshing(false);
+                })
+                .catch((error)=>{
+                    console.error('Gagal mengambil data:', error);
+                });
+        }
+      }
+
     return (
         <SafeAreaView className="flex-1 bg-[#EBEBEB] ">
         <KeyboardAvoidingView 
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={Platform.OS == 'ios' ? 0 : 0 || Platform.OS == 'android' ? 10: 0}
         >
+            
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View className="items-center bg-white">
                 <View className="flex-row gap-3 h-[70]  bg-white px-5 py-4" >
@@ -90,6 +137,11 @@ export default () => {
                         disabled={undefined}
                         loading={undefined}             
                     />
+                    {detailModul ? (
+                    <Text>{detailModul.data.namaModul}</Text>
+                    ) : (
+                        <Text>Loading...</Text>
+                    )}
                     <Modal
                         isVisible={isModalVisible}
                         swipeDirection={['left', 'right']}
@@ -134,3 +186,5 @@ export default () => {
         
     );
 }
+
+export default DetailModulScreen;
