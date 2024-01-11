@@ -77,7 +77,7 @@ export default () => {
                             key={item.id}
                             title={item.data.namaModul}
                             desc={item.data.judulModul}
-                            onPress={() => navigation.navigate(ROUTES.MODUL_DETAIL)}              
+                            onPress={() => navigation.navigate(ROUTES.MODUL_DETAIL, { id: item.id })}              
                         />  
                     )}
                 />

@@ -48,13 +48,13 @@ export default () => {
 
     useEffect(() => {
         // Memanggil fetchData untuk mengambil data awal
-        fetchData(currentPage);
-    }, [currentPage]);
+        fetchData();
+    }, []);
 
-    const fetchData = async (page: number | undefined) => {
+    const fetchData = async () => {
         try {
             const userToken = await AsyncStorage.getItem('userToken');
-            fetch(API.address + '/api/forum/page?page=${page}', {
+            fetch(API.address + '/api/forum/', {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
                 },
@@ -62,8 +62,6 @@ export default () => {
             .then((response) => response.json())
             .then((responJson)=>{
                 setForumData(responJson.forumData);
-                setCurrentPage(responJson.currentPage);
-                setTotalPages(responJson.totalPages);
                 setRefreshing(false);
             })
         } catch (error) {
@@ -76,7 +74,7 @@ export default () => {
         //Clear old data of the list
         setForumData([]);
         //Call the Service to get the latest data
-        fetchData(currentPage);
+        fetchData();
     };
 
     const currentForumData = forumData;
@@ -116,7 +114,7 @@ export default () => {
                             timePost="3 Hours Ago"
                             titlePost={item.data.title}
                             descPost={item.data.topics}
-                            onPress={() => navigation.navigate(ROUTES.DETAIL_FORUM)}  
+                            onPress={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })} 
                             imagePost={undefined}   
                             verified={true}
                             id={item.id}
