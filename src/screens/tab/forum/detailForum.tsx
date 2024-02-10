@@ -161,6 +161,7 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
         } catch (error) {
           console.error('Gagal menambahkan komentar:', error);
         }
+        
       };
 
     return (
@@ -171,15 +172,17 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
             <ForumPost
                 imageProfile={detailForum.user.photoURL}
                 namePost={detailForum.user.displayName}
-                timePost="6 Hours Ago"
+                timePost={detailForum.data.createdAt._seconds}
                 titlePost={detailForum.data.title}
                 descPost={detailForum.data.topics}
-                onPress={undefined}
-                imagePost={detailForum.data.images}
-                verified={false} 
-                likes={detailForum.data.likes} 
-                id={undefined}               
-            />
+                onPressPost={undefined}
+                onPressProfile={undefined}
+                imagePost={detailForum.data.imageURL}
+                verified={detailForum.user.verified}
+                likes={detailForum.data.likes}
+                id={detailForum.id}
+                comments={detailForum.commentCount}           
+              />
             ) : (
                 <Text>Loading...</Text>
             )}
@@ -206,7 +209,8 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
                     key={comment.id}
                     imageProfile={comment.user.photoURL}
                     nameComment={comment.user.displayName}
-                    timeComment="2 Hours Ago"
+                    verified={comment.user.verified}
+                    timeComment={comment.data.createdAt._seconds}
                     comment={comment.data.text}         
                 />
                 ))}

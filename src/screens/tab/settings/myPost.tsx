@@ -93,14 +93,16 @@ export default () => {
                             key={item.id}
                             imageProfile={item.user.photoURL}
                             namePost={item.user.displayName}
-                            timePost="3 Hours Ago"
+                            timePost={item.data.createdAt._seconds}
                             titlePost={item.data.title}
                             descPost={item.data.topics}
-                            onPress={() => navigation.navigate(ROUTES.DETAIL_FORUM)}  
-                            imagePost={undefined}   
+                            onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })}
+                            onPressProfile={undefined}
+                            imagePost={undefined}
                             verified={true}
                             id={item.id}
-                            likes={item.data.likes}    
+                            likes={item.data.likes}
+                            comments={undefined}                        
                         />
                     )}
                 />

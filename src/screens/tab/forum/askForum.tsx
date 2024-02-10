@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../../../api.json";
 import auth, { firebase } from '@react-native-firebase/auth';
 import ImagePicker, { Image as ImageType } from 'react-native-image-crop-picker';
+import { ToastProvider, useToast } from "react-native-toast-notifications";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -43,6 +44,7 @@ interface NewPost {
 export default () => {
   const [image, setImage] = useState<string | null>(null);
   // const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const toast = useToast();
   const [width, setWidth] = useState<number>(500);
   const [height, setHeight] = useState<number>(500);
   const [newPost, setNewPost] = useState<NewPost>({
@@ -58,6 +60,7 @@ export default () => {
         ...newPost,
         [name]: value,
     });
+    
   };
 
   const handleImagePicker = () => {
@@ -95,6 +98,8 @@ export default () => {
             } as unknown as Blob);
           });
           console.log(formData);
+          
+          
 
           const userToken = await AsyncStorage.getItem('userToken');
           const response = await fetch(API.address + '/api/forum/', {
@@ -105,14 +110,14 @@ export default () => {
             },
             body: formData,
           });
-            console.log(response)
+            console.log("resposne",response)
             setNewPost({
               topics: '',
               userId: '',
               images: [],
               title: '',
             });
-          
+        
         } catch (error) {
           console.error('Gagal menambahkan postingan:', error);
         }
@@ -173,8 +178,9 @@ export default () => {
     //       }
     //     });
     //   }
-
+    
     return (
+        <ToastProvider>
         <View className="flex-1 bg-[#EBEBEB]">
         <ScrollView>
         <KeyboardAvoidingView
@@ -258,6 +264,7 @@ export default () => {
         </KeyboardAvoidingView>
         </ScrollView>
     </View>
+    </ToastProvider>
         
     );
 }

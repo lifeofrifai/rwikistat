@@ -13,11 +13,13 @@ interface ForumPost{
     timePost: any,
     titlePost: any,
     descPost: any,
-    onPress: any,
+    onPressPost: any,
+    onPressProfile: any,
     imagePost: any,
     verified: boolean,
     id:any
-    likes: any
+    likes: any,
+    comments: any,
 }
 
 const ForumPost = ({
@@ -26,19 +28,26 @@ const ForumPost = ({
     timePost,
     titlePost,
     descPost,
-    onPress,
+    onPressPost,
+    onPressProfile,
     imagePost,
     verified,
     id,
-    likes
+    likes,
+    comments,
 }:ForumPost) => {
 
     const toast = useToast();
+    const date = new Date(timePost * 1000);
+    const timeNow = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false, day: 'numeric', month: 'long', year: 'numeric'});
 
     return(
         <View className="w-full bg-white px-4 mt-2">
             <View className="flex-row py-2 justify-between" >
-                <View className="flex-row">
+                <Pressable
+                    className="flex-row "
+                    onPress={onPressProfile}
+                >
                     <Image
                         source={{
                             uri: imageProfile
@@ -46,17 +55,17 @@ const ForumPost = ({
                         className="w-11 h-11 rounded-md"
                     />
                     <View className="justify-center ml-3">
-                        <View className="flex-row items-center">
+                        <View className="flex-row items-center ">
                             <Text className="font-bold text-gray-700 text-base">
                                 {namePost}
                             </Text>
                             {verified ? (<MaterialIcons name="verified" size={18} color={"#00726B"} className="ml-3"/>) : ("")  }
                         </View>
                         <Text className="text-gray-400 text-xs">
-                            {timePost}
+                            {timeNow}
                         </Text>
                     </View>
-                </View>
+                </Pressable>
                 <Ionicons
                     onPress={() => toast.show("Link Postingan disalin", { duration: 2000, type: "success" })}
                     name={"link"}
@@ -66,7 +75,7 @@ const ForumPost = ({
             </View>
             <Pressable
                 className="pb-4 pt-2"
-                onPress={onPress}
+                onPress={onPressPost}
             >
                 <Text className="font-bold text-gray-700 text-lg">
                     {titlePost}
@@ -91,6 +100,11 @@ const ForumPost = ({
                         </Text>
                     </View>
                     <Comment/>
+                    <View className="justify-center ">
+                        <Text className="text-gray-400 text-xs ">
+                            {comments}
+                        </Text>
+                    </View>
                 </View>
                 <View className="flex-row items-center">
                     <BookmarkButton itemId={id}/>

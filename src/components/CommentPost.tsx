@@ -1,5 +1,6 @@
 import { View, Text, Image, Pressable } from "react-native";
 import React from "react";
+import MaterialIcons  from "react-native-vector-icons/MaterialIcons";
 
 
 interface CommentPost{
@@ -7,6 +8,7 @@ interface CommentPost{
     nameComment: any,
     timeComment: any,
     comment: any,
+    verified: boolean,
 }
 
 const CommentPost = ({
@@ -14,7 +16,11 @@ const CommentPost = ({
     nameComment,
     timeComment,
     comment,
+    verified,
 }:CommentPost) => {
+
+    const date = new Date(timeComment * 1000);
+    const timeNow = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false, day: 'numeric', month: 'long', year: 'numeric'});
 
     return(
         <View className=" ">
@@ -26,11 +32,14 @@ const CommentPost = ({
                     className="w-11 h-11 rounded-md"
                 />
                 <View className="justify-center ml-3">
-                    <Text className="font-bold text-gray-700 text-base">
-                        {nameComment}
-                    </Text>
+                    <View className="flex-row items-center">
+                        <Text className="font-bold text-gray-700 text-base">
+                            {nameComment}
+                        </Text>
+                        {verified ? (<MaterialIcons name="verified" size={18} color={"#00726B"} className="ml-3"/>) : ("")  }
+                    </View>
                     <Text className="text-gray-400 text-xs">
-                        {timeComment}
+                        {timeNow}
                     </Text>
                 </View>
             </View>

@@ -15,6 +15,7 @@ export default{
     FORUM: 'Forum',
     ASK_FORUM: 'Tanyakan Sesuatu',
     DETAIL_FORUM: 'Detail Forum',
+    USER_PROFILE: 'Profil Pengguna',
 
     SETTING: 'Pengaturan',
     SETTING_MYPOST: 'Postingan Saya',

@@ -32,6 +32,7 @@ interface ForumData {
     user:{
         displayName: string;
         photoURL: string;
+        verified: boolean;
     }
     commentCount: number;
 }
@@ -85,10 +86,6 @@ export default () => {
         <View className="flex-1 items-center bg-[#EBEBEB] ">
             <SafeAreaView className="w-full mb-[70]">
                 <View className=" w-full justify-center items-center bg-white px-4 py-2 mt-2" >
-                    {/* <Image
-                        source={require('../assets/images/profile-1.jpeg')}
-                        className="w-11 h-11 rounded-md"
-                    /> */}
                     <Pressable
                         className=" rounded-md w-full border border-gray-400 justify-center  bg-white h-10"
                         onPress={() => navigation.navigate(ROUTES.ASK_FORUM)}    
@@ -111,14 +108,16 @@ export default () => {
                             key={item.id}
                             imageProfile={item.user.photoURL}
                             namePost={item.user.displayName}
-                            timePost="3 Hours Ago"
+                            timePost={item.data.createdAt._seconds}
                             titlePost={item.data.title}
                             descPost={item.data.topics}
-                            onPress={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })} 
+                            onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })} 
+                            onPressProfile={() => navigation.navigate(ROUTES.USER_PROFILE, { id: item.user.userId })}
                             imagePost={undefined}   
-                            verified={true}
+                            verified={item.user.verified}
                             id={item.id}
-                            likes={item.data.likes}    
+                            likes={item.data.likes}
+                            comments={item.commentCount}    
                         />
                     )}
                 />

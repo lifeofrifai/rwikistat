@@ -7,6 +7,8 @@ import { UserAuth } from '../context/authContext';
 import {useNavigation} from '@react-navigation/native';
 import ROUTES from "../constans/routes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import StarRating from "./StarRating";
+import MaterialIcons  from "react-native-vector-icons/MaterialIcons";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -53,18 +55,24 @@ export default () => {
         <View className="flex-1 items-center bg-[#EBEBEB] ">
             <View className="bg-white w-full mt-2 px-5 py-2 ">
                 
-                <View className="flex-row gap-x-3 py-5">
+                <View className="flex-row gap-x-3 py-5 items-center">
                     <Image
-                        source={photoURL}
+                        source={{
+                            uri: photoURL
+                        }}
                         className="w-[70] h-[70] rounded-md"
                     />
                     <View className="justify-center">
                         <Text className="font-bold text-gray-700 text-2xl">
                             {user?.displayName}
                         </Text>
+                        {user?.verivied ? (<MaterialIcons name="verified" size={18} color={"#00726B"} className="ml-3"/>) : ("")  }
                         <Text className="text-gray-400 text-base">
                             {user?.email}
                         </Text>
+                        <View className="mt-2">
+                            <StarRating score={80}/>
+                        </View>
                     </View>
                 </View>
                 
