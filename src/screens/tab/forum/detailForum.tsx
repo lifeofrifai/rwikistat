@@ -1,5 +1,5 @@
 import { NativeWindStyleSheet } from "nativewind";
-import { View, Text, ScrollView, TextInput } from "react-native";
+import { View, Text, ScrollView, TextInput, ActivityIndicator } from "react-native";
 import { ToastProvider } from "react-native-toast-notifications";
 import ForumPost from "../../../components/ForumPost";
 import MiniPrimaryButton from "../../../components/button/MiniPrimaryButton";
@@ -167,8 +167,8 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
     return (
         <ToastProvider>
         <View className="flex-1 items-center bg-[#EBEBEB] ">
-            <ScrollView className="w-full">
             {detailForum ? (
+            <ScrollView className="w-full">
             <ForumPost
                 imageProfile={detailForum.user.photoURL}
                 namePost={detailForum.user.displayName}
@@ -183,41 +183,42 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
                 id={detailForum.id}
                 comments={detailForum.commentCount}           
               />
-            ) : (
-                <Text>Loading...</Text>
-            )}
-            <View className="flex-row m-auto w-full justify-center items-center  bg-white px-16 py-4" >
-                <TextInput
+              <View className="flex-row m-auto w-full justify-center items-center  bg-white px-16 py-4">
+                  <TextInput
                     className="flex-row w-full rounded-md border justify-between h-10 items-center border-gray-400 p-3 mr-3"
                     placeholder="Tambahkan Komentar..."
                     placeholderTextColor="#aaa"
                     value={commentInput.text}
                     onChangeText={(text) => handleCommentInputChange('text', text)}
-                />
-                    <MiniPrimaryButton
-                        label="Kirim"
-                        icon={undefined}
-                        onPress={(event: React.FormEvent<Element>) => handleCommentSubmit(event, detailForum.id)} 
-                        disabled={undefined}
-                        loading={undefined}             
+                  />
+                  <MiniPrimaryButton
+                    label="Kirim"
+                    icon={undefined}
+                    onPress={(event: React.FormEvent<Element>) => handleCommentSubmit(event, detailForum.id)} 
+                    disabled={undefined}
+                    loading={undefined}             
+                  />
+              </View>
+              {comments.length > 0 ? (
+                <View className="w-full bg-white px-4 mt-2 py-4">
+                {comments.map((comment: any) => (
+                    <CommentPost
+                        key={comment.id}
+                        imageProfile={comment.user.photoURL}
+                        nameComment={comment.user.displayName}
+                        verified={comment.user.verified}
+                        timeComment={comment.data.createdAt._seconds}
+                        comment={comment.data.text}         
                     />
-            </View>
-            {comments.length > 0 ? (
-            <View className="w-full bg-white px-4 mt-2 py-4">
-            {comments.map((comment: any) => (
-                <CommentPost
-                    key={comment.id}
-                    imageProfile={comment.user.photoURL}
-                    nameComment={comment.user.displayName}
-                    verified={comment.user.verified}
-                    timeComment={comment.data.createdAt._seconds}
-                    comment={comment.data.text}         
-                />
-                ))}
-            </View>
-            ) : null}
-
+                    ))}
+                </View>
+                ) : null}
             </ScrollView>
+            ) : (
+                <View className="flex-1 justify-center items-center">
+                  <ActivityIndicator size="large" color="#00726B"/>
+                </View>
+            )}
         </View>
         </ToastProvider>
         

@@ -1,7 +1,7 @@
 
 import { NativeWindStyleSheet } from "nativewind";
 import { useEffect, useState } from "react";
-import { View, Text, Image, Pressable, FlatList, RefreshControl, SafeAreaView } from "react-native";
+import { View, Text, Image, Pressable, FlatList, RefreshControl, SafeAreaView, ActivityIndicator } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { ToastProvider } from 'react-native-toast-notifications'
 import { UserAuth } from "../context/authContext";
@@ -74,9 +74,18 @@ export default () => {
     const onRefresh = () => {
         //Clear old data of the list
         setForumData([]);
+        setRefreshing(true);
         //Call the Service to get the latest data
         fetchData();
     };
+
+    const emptyList = () => {
+        <View>
+            <Text>
+                Tidak ada data
+            </Text>
+        </View>
+    }
 
     const currentForumData = forumData;
     const navigation = useNavigation();
@@ -95,32 +104,39 @@ export default () => {
                         </Text>
                     </Pressable>
                 </View>
-                <FlatList
-                    refreshControl={
-                        <RefreshControl 
-                            refreshing={refreshing} 
-                            onRefresh={onRefresh} 
-                        />
-                    }
-                    data={currentForumData}
-                    renderItem={({ item }) => (
-                        <ForumPost
-                            key={item.id}
-                            imageProfile={item.user.photoURL}
-                            namePost={item.user.displayName}
-                            timePost={item.data.createdAt._seconds}
-                            titlePost={item.data.title}
-                            descPost={item.data.topics}
-                            onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })} 
-                            onPressProfile={() => navigation.navigate(ROUTES.USER_PROFILE, { id: item.user.userId })}
-                            imagePost={undefined}   
-                            verified={item.user.verified}
-                            id={item.id}
-                            likes={item.data.likes}
-                            comments={item.commentCount}    
-                        />
-                    )}
-                />
+                {refreshing ? (
+                    <View className="mt-48 items-center justify-center flex-1 ">
+                        <ActivityIndicator size="large" color="#00726B"/>
+                    </View>
+                ) : (
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl 
+                                refreshing={refreshing} 
+                                onRefresh={onRefresh} 
+                            />
+                        }
+                        data={currentForumData}
+                        renderItem={({ item }) => (
+                            <ForumPost
+                                key={item.id}
+                                imageProfile={item.user.photoURL}
+                                namePost={item.user.displayName}
+                                timePost={item.data.createdAt._seconds}
+                                titlePost={item.data.title}
+                                descPost={item.data.topics}
+                                onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })} 
+                                onPressProfile={() => navigation.navigate(ROUTES.USER_PROFILE, { id: item.user.userId })}
+                                imagePost={undefined}   
+                                verified={item.user.verified}
+                                id={item.id}
+                                likes={item.data.likes}
+                                comments={item.commentCount}    
+                            />
+                        )}
+                    />
+                )}
+                
             </SafeAreaView>
         </View>
         </ToastProvider>

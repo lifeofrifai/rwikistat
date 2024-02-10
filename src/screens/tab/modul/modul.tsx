@@ -1,7 +1,7 @@
 import { NativeWindStyleSheet } from "nativewind";
 import API from "../../../../api.json";
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView, RefreshControl, FlatList } from "react-native";
+import { View, Text, ScrollView, RefreshControl, FlatList, ActivityIndicator } from "react-native";
 import CardModul from "../../../components/CardModul";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -54,34 +54,38 @@ export default () => {
         //Clear old data of the list
         setTestData([]);
         //Call the Service to get the latest data
+        setRefreshing(true);
         fetchData();
     };
 
     return (
         <View className="flex-1 items-center bg-[#EBEBEB]">
-            <View 
-                className="w-full px-5" 
-                // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-            >
-                <FlatList
-                    refreshControl={
-                        <RefreshControl 
-                            refreshing={refreshing} 
-                            onRefresh={onRefresh} 
-                        />
-                    }
-                    
-                    data={testData}
-                    renderItem={({ item }) => (
-                        <CardModul
-                            key={item.id}
-                            title={item.data.namaModul}
-                            desc={item.data.judulModul}
-                            onPress={() => navigation.navigate(ROUTES.MODUL_DETAIL, { id: item.id })}              
-                        />  
-                    )}
-                />
-            </View>
+                {refreshing ? (
+                    <View className="items-center justify-center flex-1 ">
+                        <ActivityIndicator size="large" color="#00726B"/>
+                    </View>
+                ): (
+                    <View className="w-full px-5" >
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl 
+                                refreshing={refreshing} 
+                                onRefresh={onRefresh} 
+                            />
+                        }
+                        
+                        data={testData}
+                        renderItem={({ item }) => (
+                            <CardModul
+                                key={item.id}
+                                title={item.data.namaModul}
+                                desc={item.data.judulModul}
+                                onPress={() => navigation.navigate(ROUTES.MODUL_DETAIL, { id: item.id })}              
+                            />  
+                        )}
+                    />
+                    </View>
+                )}
         </View>
     );
 }

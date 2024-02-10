@@ -78,7 +78,7 @@ export default () => {
     return (
         <ToastProvider>
         <View className="flex-1 items-center bg-[#EBEBEB] ">
-            <SafeAreaView className="w-full mb-[70]">
+            <SafeAreaView className="w-full">
                 
                 <FlatList
                     refreshControl={
