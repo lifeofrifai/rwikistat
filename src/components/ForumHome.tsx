@@ -16,7 +16,7 @@ NativeWindStyleSheet.setOutput({
     default: "native",
 });
 
-interface ForumData {
+interface ForumData { 
     id: string;
     data: {
         userId: string;

@@ -19,6 +19,8 @@ interface ModulData {
         namaModul: string;
         codeSampel: string;
         judulModul: string;
+        urlShiny: string;
+        textData: string;
     };
 }
 
@@ -67,6 +69,7 @@ export default () => {
                 ): (
                     <View className="w-full px-5" >
                     <FlatList
+                        
                         refreshControl={
                             <RefreshControl 
                                 refreshing={refreshing} 
