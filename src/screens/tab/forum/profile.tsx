@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from "react";
 import { NativeWindStyleSheet } from "nativewind";
-import { View, Text, Image, unstable_batchedUpdates } from "react-native";
+import { View, Text, Image, unstable_batchedUpdates, FlatList } from "react-native";
 import SettingButton from "../../../components/button/SettingButton";
 import auth from '@react-native-firebase/auth';
 import { UserAuth } from '../../../context/authContext'
@@ -10,21 +10,55 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import StarRating from "../../../components/StarRating";
 import ForumPost from "../../../components/ForumPost";
 import { ToastProvider } from "react-native-toast-notifications";
+import API from "../../../../api.json";
+import axios from "axios";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
 });
 
+interface UserData {
+    id: number;
+    data: {
+        displayName: string;
+        email: string;
+        photoURL: string;
+        verified: boolean;
+    };
+}
+
+interface ForumData {
+    id: string;
+    data: {
+        userId: string;
+        topics: string;
+        title:string;
+        images: string[];
+        likes: number;
+        createdAt: {
+            _seconds: number;
+            _nanoseconds: number;
+        };
+    };
+    user:{
+        displayName: string;
+        photoURL: string;
+        verified: boolean;
+    }
+    commentCount: number;
+}
+
 interface ProfileScreenProps {
     route: {
-      params?: {
-        userId?: string;
-      };
+        params?: {
+            id?: string;
+        };
     };
-  }
+}
 
   const ProfileScreen: React.FC<ProfileScreenProps> = ({ route }) => {
-    const userId = route.params?.userId;
+    const userId = route.params?.id; 
     console.log("id is",userId);
     if (userId === undefined) {
         // Handle the case where id is not available
@@ -34,33 +68,141 @@ interface ProfileScreenProps {
             </View>
         );
     }
-    console.log(userId);
-    const navigation = useNavigation();
-    
+
+    const [detailUser, setDetailUser] = useState<any>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalPosts, setTotalPosts] = useState(0);   
+    const [forumData, setForumData] = useState<ForumData[]>([]);
+
+    useEffect(() => {
+        // Memanggil fetchData untuk mengambil data awal
+        fetchDataUser();
+    }, []);
+
+    const fetchDataUser = async () => {
+        if (userId) {
+            const userToken = await AsyncStorage.getItem('userToken');
+            // Lakukan permintaan ke API untuk mendapatkan data detail modul berdasarkan ID
+            fetch(API.address + `/api/user/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Gagal mengambil data user.');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    setDetailUser(data); // Menyimpan data detail modul dalam state
+                })
+                .catch((error) => {
+                    console.error('There was an error!', error);
+                });
+        }
+    }
+
+    useEffect(() => {
+        fetchPosted(currentPage);
+    }, [currentPage]);
+
+    const currentPosted = forumData;
+    const jumlahCurrentPosted = totalPosts;
+
+    const fetchPosted = async (page: number | undefined) => { 
+        try {
+                // Mendapatkan token dari localStorage atau sumber lainnya
+            const storedToken = AsyncStorage.getItem('customToken');
+
+            // Membuat header dengan menyertakan token
+            const headers = {
+                Authorization: `Bearer ${storedToken}`,
+            };
+
+            const url = `http://localhost:8080/api/forum/posted/${userId}?page=${page}`;
+            const response = await axios.get(url, {headers});
+            if (response.status === 200) {
+                const { forumData, currentPage, totalPages, totalPosts } = response.data;
+                setForumData(forumData);
+                setCurrentPage(currentPage);
+                setTotalPages(totalPages);
+                setTotalPosts(totalPosts);
+            } else {
+                console.error('Gagal mendapatkan postingan yang diposting:', response.statusText);
+            }
+            
+        } catch (error) {
+            console.error('Gagal mengambil data:', error);
+        }
+    };
+
+    // const fetchPosted = async (page: number | undefined) => {
+    //     try {
+    //         const storedToken = await AsyncStorage.getItem('customToken');
+    //         fetch(API.address + `/api/forum/posted/${userId}/?page=${page}`, {
+    //             headers: {
+    //                 Authorization: `Bearer ${storedToken}`,
+    //             },
+    //         })
+    //             .then((response) => {
+    //                 if (!response.ok) {
+    //                     throw new Error('Gagal mengambil data postingan.');
+    //                 }
+    //                 return response.json();
+    //             })
+    //             .then((data) => {
+    //                 const { forumData, currentPage, totalPages, totalPosts } = data;
+    //                 setForumData(forumData);
+    //                 setCurrentPage(currentPage);
+    //                 setTotalPages(totalPages);
+    //                 setTotalPosts(totalPosts);
+    //                 console.log("Data Postingan Diambil");
+    //             }).catch((error) => {
+    //                 console.error('Gagal mendapatkan postingan yang diposting', error);
+    //             });
+    //     } catch (error) {
+    //         console.error('There was an error!', error);
+    //     }
+    // }
+    console.log("Data Postingan",forumData);  
+    console.log("Is User Verivied? :",detailUser?.verified);
 
 
     return (
         <ToastProvider>
         <View className="flex-1 items-center bg-[#EBEBEB] ">
             <View className="bg-white w-full mt-2 px-5 py-2 ">
-                
+                {detailUser? (
                 <View className="flex-row gap-x-3 py-5 items-center">
                     <Image
-                        source={undefined}
-                        className="w-[70] h-[70] rounded-md bg-red-200"
+                        source={{
+                            uri : detailUser.photoURL
+                        }}
+                        className="w-[70] h-[70] rounded-md"
                     />
                     <View className="justify-center">
-                        <Text className="font-bold text-gray-700 text-2xl">
-                            Test Profile
-                        </Text>
+                        <View className="flex-row items-center ">
+                            <Text className="font-bold text-gray-700 text-2xl">
+                                {detailUser.displayName}
+                            </Text>
+                            {detailUser?.verified ? (<MaterialIcons name="verified" size={22} color={"#00726B"} className="ml-5"/>) : ("")  }
+                        </View>
                         <Text className="text-gray-400 text-base">
-                            Haii@gmail.com
+                            {detailUser.email}
                         </Text>
                         <View className="mt-2">
-                            <StarRating score={130}/>
+                            <StarRating score={detailUser.score}/>
                         </View>
                     </View>
                 </View>
+                ) : (
+                    <View>
+                        <Text> No data</Text>
+                    </View>
+                )}
+                
                 
                 
                 <View className="h-[2] bg-gray-200 w-full rounded-full"/>
@@ -70,19 +212,24 @@ interface ProfileScreenProps {
                     </View>
                 </View>
             </View>
-            <ForumPost 
-                imageProfile={undefined}
-                namePost="Muahmmadasd"
-                timePost="{undefined}"
-                titlePost="{undefined} "
-                descPost="{undefined} asdsad asdandjkasnda"
-                onPressPost={undefined}
-                onPressProfile={undefined}
-                imagePost={undefined}
-                verified={false}
-                id={undefined}
-                likes={undefined}
-                comments={undefined}                    
+            <FlatList
+                data={currentPosted}
+                renderItem={({ item }) => (
+                    <ForumPost
+                        imageProfile={item.user.photoURL}
+                        namePost={item.user.displayName}
+                        timePost={item.data.createdAt._seconds}
+                        titlePost={item.data.title}
+                        descPost={item.data.topics}
+                        onPressPost={undefined}
+                        onPressProfile={undefined}
+                        imagePost={item.data.images[0]}
+                        verified={item.user.verified}
+                        id={item.id}
+                        likes={item.data.likes}
+                        comments={item.commentCount}
+                    />
+                )}
             />
         </View>
         </ToastProvider>

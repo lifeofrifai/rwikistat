@@ -15,7 +15,7 @@ NativeWindStyleSheet.setOutput({
 });
 
 interface DetailForumScreenProps {
-    route: {
+    route: { 
       params?: {
         id?: string;
       };
@@ -164,6 +164,31 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
         
       };
 
+    console.log("data : ",detailForum)
+    // {
+    //   "commentCount": 0,
+    //    "data": {
+    //     "createdAt": {
+    //       "_nanoseconds": 769000000, 
+    //       "_seconds": 1707998291
+    //     }, 
+    //     "images": ["https://storage.googleapis.com/rwikistat-2f82f.appspot.com/images/P2kFxWIV6DzbAId3FVsE/Backdrop-Nobar.jpg?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-gvqe2%40rwikistat-2f82f.iam.gserviceaccount.com%2F20240215%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240215T115816Z&X-Goog-Expires=86400&X-Goog-SignedHeaders=host&X-Goog-Signature=84dee67c2b8999a7e0382e3e9bc13472fa04e138794005a0464663c6f35b28edce96e3452f51a905cf558c4f3f3d60aa6598c72710ba983ce9bb572a7cca9d9bd5b8ec4b0f374fe9f3c55488af6169e4d2c67ad3c38ad6fb6d930949ed3a22cd50783a20fc7678e91c94b5a828c0ed519346888264a0f35dd4e15df604b3b3812633e7eb9b57b2bbd1e403725e601a2f8dcad0afe124e516d1d54d2b5bd2004080381abd440477fcd3bd28e4b13b5de84183ff589456edd5d98b0737e4c4378e6ffdd53402f70e9ff78e06f6039f6d9a81358508779438632fe45bd363db09dfbfe2d0015af271fae910efcf6755146a75652d1eea89e96e14457b541eaaf1ad"], 
+    //     "likes": 0, 
+    //     "title": "liat foto", 
+    //     "topics": "foto", 
+    //     "userId": "Szx4BvDBVDfbGwOtDuEoBXMVvyt2"
+    //   }, 
+    //     "id": "P2kFxWIV6DzbAId3FVsE", 
+    //     "user": {
+    //       "displayName": "Rwikistat", 
+    //       "email": "rwikistat@gmail.com", 
+    //       "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocKAuEkaBrnfZeyNP1l1D4sv2XIrFOrOa5isqAvi8-93=s96-c", 
+    //       "role": "user", 
+    //       "score": 153,
+    //       "verified": true
+    //     }
+    // }
+
     return (
         <ToastProvider>
         <View className="flex-1 items-center bg-[#EBEBEB] ">
@@ -177,7 +202,7 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
                 descPost={detailForum.data.topics}
                 onPressPost={undefined}
                 onPressProfile={undefined}
-                imagePost={detailForum.data.imageURL}
+                imagePost={detailForum.data.images}
                 verified={detailForum.user.verified}
                 likes={detailForum.data.likes}
                 id={detailForum.id}

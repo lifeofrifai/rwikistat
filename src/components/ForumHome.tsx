@@ -126,7 +126,7 @@ export default () => {
                                 titlePost={item.data.title}
                                 descPost={item.data.topics}
                                 onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })} 
-                                onPressProfile={() => navigation.navigate(ROUTES.USER_PROFILE, { id: item.user.userId })}
+                                onPressProfile={() => navigation.navigate(ROUTES.USER_PROFILE, { id: item.data.userId })}
                                 imagePost={undefined}   
                                 verified={item.user.verified}
                                 id={item.id}

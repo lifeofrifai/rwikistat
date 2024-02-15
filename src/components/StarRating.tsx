@@ -31,7 +31,7 @@ const StarRating =({
         <View className='flex-row'>
             {Array.from({ length: filledStars }).map((_, index) => (
                 <View key={index} className=' '>
-                    <AntDesign name="star" size={20} color="#F6C806" />
+                    <AntDesign name="star" size={16} color="#F6C806" />
                 </View>
             ))}
         </View>

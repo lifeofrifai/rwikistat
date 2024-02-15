@@ -36,7 +36,7 @@ const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
           </View>
         );
       }
-    const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
+      
     const Stack = createStackNavigator();
     const keyboard = useKeyboard();
     const insets = useSafeAreaInsets();
