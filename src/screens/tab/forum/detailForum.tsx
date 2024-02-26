@@ -164,7 +164,6 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
         
       };
 
-    console.log("data : ",detailForum)
     // {
     //   "commentCount": 0,
     //    "data": {
@@ -202,7 +201,7 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
                 descPost={detailForum.data.topics}
                 onPressPost={undefined}
                 onPressProfile={undefined}
-                imagePost={detailForum.data.images}
+                imagePost={undefined}
                 verified={detailForum.user.verified}
                 likes={detailForum.data.likes}
                 id={detailForum.id}
