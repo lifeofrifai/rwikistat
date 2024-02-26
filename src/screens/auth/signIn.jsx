@@ -151,7 +151,7 @@ export default () => {
                             NIM/NPM
                         </Text>
                         <TextInput
-                            className="flex-row w-full rounded-xl border justify-between h-14 items-center border-gray-400 p-3"
+                            className="text-black flex-row w-full rounded-xl border justify-between h-14 items-center border-gray-400 p-3"
                             placeholder="Masukan NIM/NPM"
                             placeholderTextColor="#aaa"
                             keyboardType="numeric"
@@ -165,7 +165,7 @@ export default () => {
                         </Text>
                         <View className="flex-row w-full rounded-xl border justify-between h-14 items-center border-gray-400">
                             <TextInput
-                                className="w-[80%] h-14 p-3"
+                                className="w-[80%] h-14 p-3 text-black"
                                 secureTextEntry={!showPassword} 
                                 value={password} 
                                 onChangeText={handlePasswordChange} 

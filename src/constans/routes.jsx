@@ -7,6 +7,7 @@ export default{
     MODUL: 'Materi',
     MODUL_DETAIL: 'Baca Materi',
     CHAT_BOT: 'Chat Bot',
+    COMPILER_MODULE: 'Compiler',
 
 
     COMPILER: 'Compiler',

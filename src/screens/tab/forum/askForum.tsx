@@ -198,7 +198,7 @@ export default () => {
                     Berikan informasi yang spesifik dan dengan konteks yang jelas.
                 </Text>
                 <TextInput
-                    className="flex-row w-full rounded-xl border justify-between h-12 items-center border-gray-400 p-3"
+                    className="flex-row w-full rounded-xl border justify-between h-12 items-center border-gray-400 p-3 text-black"
                     placeholder="Contoh : Apa itu bahasa pemrogrmaan R?"
                     placeholderTextColor="#aaa"
                     value={newPost.title}
@@ -213,7 +213,7 @@ export default () => {
                 Jelaskan masalah anda sesuai dengan judul
                 </Text>
                 <TextInput
-                    className="flex-row w-full rounded-xl border justify-between h-28 items-center border-gray-400 p-3"
+                    className="flex-row w-full rounded-xl border justify-between h-28 items-center border-gray-400 p-3 text-black"
                     
                     placeholder="Topik"
                     placeholderTextColor="#aaa"

@@ -209,7 +209,7 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
               />
               <View className="flex-row m-auto w-full justify-center items-center  bg-white px-16 py-4">
                   <TextInput
-                    className="flex-row w-full rounded-md border justify-between h-10 items-center border-gray-400 p-3 mr-3"
+                    className="flex-row w-full rounded-md border justify-between h-10 items-center border-gray-400 p-3 mr-3 text-black"
                     placeholder="Tambahkan Komentar..."
                     placeholderTextColor="#aaa"
                     value={commentInput.text}

@@ -4,15 +4,14 @@ import MiniPrimaryButton from "../../../components/button/MiniPrimaryButton";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useKeyboard } from "@react-native-community/hooks";
-import CodeEditor, { CodeEditorSyntaxStyles } from '@rivascva/react-native-code-editor';
-import  ROUTES  from "../../../constans/routes";
 import { useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../../../api.json";
-import Modal from "react-native-modal";
 import { createStackNavigator } from "@react-navigation/stack";
-import Markdown from 'react-native-markdown-display';
-import mdStyle from '../../../../src/constans/mdStyle';
+import MdRenderer from "../../../components/MdRenderer";
+import { FloatingAction } from "react-native-floating-action";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ROUTES from "../../../constans/routes";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -49,47 +48,6 @@ const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
     const [pdfUrl, setPdfUrl] = useState('');
     const [refreshing, setRefreshing] = useState(true);
 
-    const [code, setCode] = useState('#Write Your R Code Here # png("out.png", width = 800, height = 600)');
-
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
-
-
-    const handleCompile = async () => {
-        try {
-            const userToken = await AsyncStorage.getItem('userToken');
-            const response = await fetch(API.address + '/api/compiler/test/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userToken}`,
-            },
-            body: JSON.stringify({ code }),
-          });
-      
-        // Reset imageUrl to null before processing new response
-        setImageUrl(null);
-    
-        // Check if the response is an image
-          const contentType = response.headers.get('content-type');
-          if (contentType && contentType.includes('image/png')) {
-            // If it's an image, set the response as an image source
-            const newImageUrl = await response.text();
-            console.log(newImageUrl);
-            setImageUrl(newImageUrl);
-            setModalVisible(!isModalVisible);
-        } else {
-            // If it's not an image, set the response as text
-            const data = await response.text();
-            setResponse(data);
-            setModalVisible(!isModalVisible);
-        }
-        } catch (error) {
-            console.error(error);
-            setResponse('Terjadi kesalahan saat mengirim kode.');
-        }
-    };
 
     useEffect(() => {
         fetchData();
@@ -117,30 +75,47 @@ const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
         }
       }
 
+      const Action = [
+        {
+          text: "Compiler",
+          icon: <MaterialCommunityIcons name='eye' size={20} color="#fff" />,
+          name: "bt_compiler",
+          position: 2,
+          screen : "ROUTES.COMPILER_MODULE"
+        },
+        {
+          text: "Shinny Compiler",
+          icon: <MaterialCommunityIcons name='eye' size={20} color="#fff" />,
+          name: "bt_shinny_compiler",
+          position: 1,
+          screen : "ROUTES.COMPILER_MODULE"
+        }
+      ];
+
     return (
-        <SafeAreaView className="flex-1 bg-[#EBEBEB] ">
-        <KeyboardAvoidingView 
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? 0 : 0 || Platform.OS == 'android' ? 10: 0}
-        >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          {detailModul? (
-          <ScrollView className="bg-white mt-3 px-4 mb-3">
-            <Text className="text-lg font-semibold text-mainGreen">{detailModul.data.namaModul}</Text>
-            <Markdown style={mdStyle}>
-                {detailModul.data.textData}
-            </Markdown>
-            {/* <Text>{detailModul.data.textData}</Text> */}
-          </ScrollView>
-          ) : (
-            <View>
-              <Text>No data</Text>
-            </View>
-          )}
-            
-        </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+      <SafeAreaView className="flex-1 bg-[#EBEBEB]">
+        {detailModul? (
+        <SafeAreaView>
+          <MdRenderer
+            idMarkdown={detailModul.data.textData} 
+            namaModul={detailModul.data.namaModul} 
+            judulModul={detailModul.data.judulModul}  
+          />
+          <FloatingAction
+            actions={Action}
+            color="#00726B"
+            floatingIcon={<MaterialCommunityIcons name='code-braces' size={26} color="#fff" />}
+            onPressItem={(screen: any) => {
+              console.log(`selected button: ${screen}`);
+            }}
+          />
         </SafeAreaView>
+        ) : (
+          <View className="justify-center items-center">
+            <Text className="text-black">No data</Text>
+          </View>
+        )}
+      </SafeAreaView>
         
     );
 }
