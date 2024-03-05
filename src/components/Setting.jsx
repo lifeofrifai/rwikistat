@@ -2,7 +2,7 @@ import React, { useEffect, useState} from "react";
 import { NativeWindStyleSheet } from "nativewind";
 import { View, Text, Image } from "react-native";
 import SettingButton from "./button/SettingButton";
-import auth from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import { UserAuth } from '../context/authContext';
 import {useNavigation} from '@react-navigation/native';
 import ROUTES from "../constans/routes";
@@ -35,15 +35,16 @@ export default () => {
 
     // Set an initializing state whilst Firebase connects
     const [initializing, setInitializing] = useState(true);
-    const [user, setUser] = useState();
+    const [userr, setUser] = useState();
     const [score, setScore] = useState(null);
+    const user = firebase.auth().currentUser;
 
     const fetchScore = async () => {
         try {
             // Mendapatkan token dari localStorage atau sumber lainnya
             const userToken = await AsyncStorage.getItem('userToken');
             // Membuat header dengan menyertakan token
-
+            const user = firebase.auth().currentUser;
             if (user) {
                 const uid = user.uid;
                 // Mengirim request ke API
@@ -69,16 +70,16 @@ export default () => {
         
       }, [user]);
 
-      useEffect(() => {
-        // Memanggil fetchData untuk mengambil data awal
-        fetchDataUser();
-    }, [user]);
+
 
     const [detailUser, setDetailUser] = useState(null);
 
     const fetchDataUser = async () => {
+        const user = firebase.auth().currentUser;
+        console.log('userFb', user)
         if (user) {
             const id = user.uid;
+            console.log('id dalam',id)
             const userToken = await AsyncStorage.getItem('userToken');
             // Lakukan permintaan ke API untuk mendapatkan data detail modul berdasarkan ID
             fetch(API.address + `/api/user/${id}`, {
@@ -94,12 +95,18 @@ export default () => {
                 })
                 .then((data) => {
                     setDetailUser(data); // Menyimpan data detail modul dalam state
+                    console.log('datauser',data)
                 })
                 .catch((error) => {
                     console.error('There was an error!', error);
                 });
         }
     }
+
+    useEffect(() => {
+        // Memanggil fetchData untuk mengambil data awal
+        fetchDataUser();
+    }, [user]);
 
     // Handle user state changes
     function onAuthStateChanged(user) {
@@ -131,7 +138,7 @@ export default () => {
                     <View className="justify-center">
                         <View className="flex-row items-center ">
                             <Text className="font-bold text-gray-700 text-2xl">
-                                {detailUser.displayName}
+                                {detailUser?.displayName}
                             </Text>
                             {detailUser?.verified ? (<MaterialIcons name="verified" size={22} color={"#00726B"} className="ml-5"/>) : ("")  }
                         </View>
