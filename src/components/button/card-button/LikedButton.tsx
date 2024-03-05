@@ -22,7 +22,7 @@ const LikedButton: React.FC<{ itemId: string }> =({ itemId }) =>{
       
           if (userId) {
             const userToken = await AsyncStorage.getItem('userToken');
-            fetch(API.address + `/api/forum/like/${itemId}/is-liked?userId=${userId}`, {
+            fetch(API.address + `/api/forum/like/${itemId}/is-liked?uid=${userId}`, {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
                 }
@@ -53,7 +53,7 @@ const LikedButton: React.FC<{ itemId: string }> =({ itemId }) =>{
                 const userToken = await AsyncStorage.getItem('userToken');
 
                 const requestBody = {
-                    userId: userId,
+                    uid: userId,
                     // Add other request body parameters if needed
                   };
                 fetch(API.address + `/api/forum/like/${itemId}`, {
@@ -93,7 +93,7 @@ const LikedButton: React.FC<{ itemId: string }> =({ itemId }) =>{
                   const userToken = await AsyncStorage.getItem('userToken');
   
                   const requestBody = {
-                      userId: userId,
+                      uid: userId,
                       // Add other request body parameters if needed
                     };
                   fetch(API.address + `/api/forum/unlike/${itemId}`, {

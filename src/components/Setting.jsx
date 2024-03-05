@@ -38,7 +38,68 @@ export default () => {
     const [user, setUser] = useState();
     const [score, setScore] = useState(null);
 
-    
+    const fetchScore = async () => {
+        try {
+            // Mendapatkan token dari localStorage atau sumber lainnya
+            const userToken = await AsyncStorage.getItem('userToken');
+            // Membuat header dengan menyertakan token
+
+            if (user) {
+                const uid = user.uid;
+                // Mengirim request ke API
+                fetch(API.address + `/api/user/${uid}/score`, {
+                    headers: {
+                        Authorization: `Bearer ${userToken}`,
+                    },
+                })
+
+                .then((response) => response.json())
+                .then((responJson)=>{
+                    setScore(responJson.score);
+                })
+            }
+        } catch (error) {
+            console.error('Gagal mengambil data:', error);
+        }
+    }
+
+    useEffect(() => {
+        // Memanggil fetchData untuk mengambil data awal
+        fetchScore();
+        
+      }, [user]);
+
+      useEffect(() => {
+        // Memanggil fetchData untuk mengambil data awal
+        fetchDataUser();
+    }, [user]);
+
+    const [detailUser, setDetailUser] = useState(null);
+
+    const fetchDataUser = async () => {
+        if (user) {
+            const id = user.uid;
+            const userToken = await AsyncStorage.getItem('userToken');
+            // Lakukan permintaan ke API untuk mendapatkan data detail modul berdasarkan ID
+            fetch(API.address + `/api/user/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Gagal mengambil data user.');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    setDetailUser(data); // Menyimpan data detail modul dalam state
+                })
+                .catch((error) => {
+                    console.error('There was an error!', error);
+                });
+        }
+    }
 
     // Handle user state changes
     function onAuthStateChanged(user) {
@@ -53,7 +114,7 @@ export default () => {
 
     if (initializing) return null;
 
-    console.log("is user verivied : ",user?.verified);
+    // console.log("is user verivied : ",detailUser.displayName);
 
 
     return (
@@ -63,20 +124,22 @@ export default () => {
                 <View className="flex-row gap-x-3 py-5 items-center">
                     <Image
                         source={{
-                            uri: user?.photoURL
+                            uri: detailUser?.photoURL
                         }}
                         className="w-[70] h-[70] rounded-md"
                     />
                     <View className="justify-center">
-                        <Text className="font-bold text-gray-700 text-2xl">
-                            {user?.displayName}
-                        </Text>
-                        {user?.verified ? (<MaterialIcons name="verified" size={18} color={"#00726B"} className="ml-3"/>) : ("")  }
+                        <View className="flex-row items-center ">
+                            <Text className="font-bold text-gray-700 text-2xl">
+                                {detailUser.displayName}
+                            </Text>
+                            {detailUser?.verified ? (<MaterialIcons name="verified" size={22} color={"#00726B"} className="ml-5"/>) : ("")  }
+                        </View>
                         <Text className="text-gray-400 text-base">
-                            {user?.email}
+                            {detailUser?.email}
                         </Text>
                         <View className="mt-1">
-                            <StarRating score={user?.score}/>
+                            <StarRating score={score}/>
                         </View>
                     </View>
                 </View>

@@ -17,11 +17,11 @@ const BookmarkButton:React.FC<{ itemId: string }> =({ itemId }) =>{
     const handleIsBookmarked = async (itemId: string) => {
         try {
           const user = firebase.auth().currentUser;
-          const userId = user?.uid; // Get the user ID from the authentication object
+          const uid = user?.uid; // Get the user ID from the authentication object
       
-          if (userId) {
+          if (uid) {
             const userToken = await AsyncStorage.getItem('userToken');
-            fetch(API.address + `/api/forum/bookmark/${itemId}/is-bookmarked?userId=${userId}`, {
+            fetch(API.address + `/api/forum/bookmark/${itemId}/is-bookmarked?uid=${uid}`, {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
                 }
@@ -45,14 +45,14 @@ const BookmarkButton:React.FC<{ itemId: string }> =({ itemId }) =>{
       const handleBookmark = async (itemId: string) => {
         try {
           const user = firebase.auth().currentUser;
-          const userId = user?.uid; // Get the user ID from the authentication object
-            console.log("user",userId);
-          if (userId) {
-            if (userId) {
+          const uid = user?.uid; // Get the user ID from the authentication object
+            console.log("user",uid);
+          if (uid) {
+            if (uid) {
                 const userToken = await AsyncStorage.getItem('userToken');
 
                 const requestBody = {
-                    userId: userId,
+                    uid: uid,
                     // Add other request body parameters if needed
                   };
                 fetch(API.address + `/api/forum/bookmark/${itemId}`, {
@@ -85,14 +85,14 @@ const BookmarkButton:React.FC<{ itemId: string }> =({ itemId }) =>{
       const handleUnbookmark = async (itemId: string) => {
         try {
             const user = firebase.auth().currentUser;
-            const userId = user?.uid; // Get the user ID from the authentication object
-              console.log("user",userId);
-            if (userId) {
-              if (userId) {
+            const uid = user?.uid; // Get the user ID from the authentication object
+              console.log("user",uid);
+            if (uid) {
+              if (uid) {
                   const userToken = await AsyncStorage.getItem('userToken');
   
                   const requestBody = {
-                      userId: userId,
+                      uid: uid,
                       // Add other request body parameters if needed
                     };
                   fetch(API.address + `/api/forum/unbookmark/${itemId}`, {

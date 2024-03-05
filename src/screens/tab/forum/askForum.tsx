@@ -17,7 +17,7 @@ NativeWindStyleSheet.setOutput({
 interface ForumData {
   id: string;
   data: {
-    userId: string;
+    uid: string;
     topics: string;
     title:string;
     images: string[];
@@ -38,11 +38,11 @@ interface NewPost {
   topics: string;
   title: string;
   images: File[];
-  userId: string,
+  uid: string,
 }
 
 export default () => {
-  const [image, setImage] = useState<string | null>(null);
+  const [images, setImages] = useState<string[]>([]);
   // const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const toast = useToast();
   const [width, setWidth] = useState<number>(500);
@@ -51,7 +51,7 @@ export default () => {
     topics: "",
     title: "",
     images: [],
-    userId: '',
+    uid: '',
   }); 
 
 
@@ -63,22 +63,18 @@ export default () => {
     
   };
 
-  const handleImagePicker = () => {
-    ImagePicker.openPicker({
-      width,
-      height,
-      cropping: true,
-    })
-      .then((image: ImageType) => {
-        setImage(image.path);
-        setHeight(height);
-        setWidth(width);
-        console.log('gambari',image);
-        console.log(setImage)
-      })
-      .catch((error: Error) => {
-        console.log(error);
+  const pickImage = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true
       });
+  
+      setImages(prevImages => [...prevImages, image.path]);
+    } catch (error) {
+      console.log('Error picking image:', error);
+    }
   };
 
     const handleSubmit = async (event: FormEvent) => {
@@ -88,15 +84,16 @@ export default () => {
           const user = firebase.auth().currentUser;
           formData.append('topics', newPost.topics);
           formData.append('title', newPost.title);
-          formData.append('userId',user?.uid);
-             newPost.images.forEach((image, index) => {
-            // Append each image file with a unique key (e.g., 'images[0]', 'images[1]', etc.)
-            formData.append(`images[${index}]`, {
-              uri: image,
-              type: 'image/jpeg', // You may need to adjust the file type based on your requirements
-              name: `image_${index}.jpg`, // You can provide a custom name or use the original file name
-            } as unknown as Blob);
+          formData.append('uid',user?.uid);
+          // Tambahkan setiap gambar ke FormData
+          images.forEach((images, index) => {
+            formData.append(`images`, {
+              uri: images,
+              name: `image${index + 1}.jpg`,
+              type: 'image/jpeg',
+            });
           });
+          
           console.log(formData);
           
           
@@ -113,10 +110,13 @@ export default () => {
             console.log("resposne",response)
             setNewPost({
               topics: '',
-              userId: '',
+              uid: '',
               images: [],
               title: '',
             });
+
+            // Bersihkan daftar gambar yang dipilih
+          setImages([]);
         
         } catch (error) {
           console.error('Gagal menambahkan postingan:', error);
@@ -235,19 +235,18 @@ export default () => {
                     className="bg-gray-200"
                     label="Tambahkan Foto Dari Galeri"
                     icon="photo"
-                    onPress={handleImagePicker} 
+                    onPress={pickImage} 
                     disabled={undefined} 
                     loading={undefined}
                 />
             </View>
-            <View className='items-center'>
-                {/* {image && <Image source={{ uri: image }} style={{ width: 200, height: 200, marginTop: 15 }} />} */}
-                {image && (
+            <View style={{ alignItems: 'center' }}>
+                {images.map((image) => (
                     <Image
                         source={{ uri: image }}
                         style={{ width: 200, height: 200, marginTop: 15 }}
                     />
-                )}
+                ))}
             </View>
             <View className='mt-5'>
                 <PrimaryButton

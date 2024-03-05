@@ -111,9 +111,9 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
         
           // Dapatkan ID pengguna yang aktif (dalam hal ini, kita asumsikan pengguna sudah login)
           const user = firebase.auth().currentUser;
-          const userId = user?.uid;
+          const uid = user?.uid;
         
-          if (!userId) {
+          if (!uid) {
             // Handle jika pengguna tidak terotentikasi atau belum masuk
             console.error('Pengguna belum terotentikasi atau belum masuk.');
             return;
@@ -122,7 +122,7 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
           // Set up the request body as JSON
           const requestBody = {
             text: text,
-            userId: userId,
+            uid: uid,
           };
         
           // Kirim komentar ke endpoint Express dengan ID pengguna yang aktif
@@ -201,7 +201,7 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
                 descPost={detailForum.data.topics}
                 onPressPost={undefined}
                 onPressProfile={undefined}
-                imagePost={undefined}
+                imagePost={detailForum.user.photoURL}
                 verified={detailForum.user.verified}
                 likes={detailForum.data.likes}
                 id={detailForum.id}

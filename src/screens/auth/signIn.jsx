@@ -10,7 +10,7 @@ import { GoogleSignin,statusCodes } from '@react-native-google-signin/google-sig
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useToast, ToastProvider } from "react-native-toast-notifications";
-
+import API from "../../../api.json";
 
 export default () => {
     const [loading, setLoading] = React.useState(false);
@@ -29,7 +29,6 @@ export default () => {
           await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
           // Get the users ID token
           const { idToken, user } = await GoogleSignin.signIn();
-          console.log("Google User data:", user);
       
           // Create a Google credential with the token
           const googleCredential = auth.GoogleAuthProvider.credential(idToken);
@@ -39,13 +38,31 @@ export default () => {
       
           // Mengambil ID token dari pengguna
           const googleUser = userCredential.user;
+
+          
+
+          
           // Mengambil ID token dari pengguna
           googleUser.getIdToken()
-          .then((idToken) => {
+          .then(async (idToken) => {
             console.log("User token:", idToken);
-  
+            console.log("User data:", googleUser);
+
+            const userData = {
+              email: googleUser.email || '',
+              role: 'user', // Ganti ini dengan cara Anda menentukan peran (role) pengguna
+              uid: googleUser.uid,
+              displayName: googleUser.displayName || '',
+              photoURL: googleUser.photoURL || '',
+            };
+
+            // Kirim data pengguna ke endpoint REST API
+            await sendUserDataToServer(userData);
+
             // Simpan token ke AsyncStorage atau state jika diperlukan
             AsyncStorage.setItem('userToken', idToken);
+
+            
   
             // Navigasi ke halaman selanjutnya
             navigation.navigate(ROUTES.MODUL);
@@ -60,7 +77,26 @@ export default () => {
         }
       };
       
+      const sendUserDataToServer = async (userData) => {
+        try {
 
+          const response = await fetch(API.address + `/google-login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+          });
+      
+          if (response.ok) {
+            console.log('Data pengguna berhasil disimpan di server.');
+          } else {
+            console.error('Gagal mengirim data pengguna ke server.');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
 
     const [showPassword, setShowPassword] = React.useState(false);
     const toggleShowPassword = () => { 

@@ -16,7 +16,7 @@ NativeWindStyleSheet.setOutput({
 interface ForumData {
     id: string;
     data: {
-        userId: string;
+        uid: string;
         topics: string; 
         title:string;
         images: string[];
@@ -49,9 +49,9 @@ export default () => {
     const fetchData = async (page: number | undefined) => {
         try {
             const user = firebase.auth().currentUser;
-            const userId = user?.uid;
+            const uid = user?.uid;
             const userToken = await AsyncStorage.getItem('userToken');
-            fetch(API.address + `/api/forum/bookmarks/${userId}?page=${page}`, {
+            fetch(API.address + `/api/forum/bookmarks/${uid}?page=${page}`, {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
                 },
@@ -99,7 +99,7 @@ export default () => {
                             titlePost={item.data.title}
                             descPost={item.data.topics}
                             onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })}
-                            onPressProfile={() => navigation.navigate(ROUTES.USER_PROFILE, { id: item.data.userId })}
+                            onPressProfile={() => navigation.navigate(ROUTES.USER_PROFILE, { id: item.data.uid })}
                             imagePost={undefined}
                             verified={true}
                             id={item.id}

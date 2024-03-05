@@ -11,7 +11,7 @@ export default{
 
 
     COMPILER: 'Compiler',
-    COMPILER_OUTPUT: 'Compiler Output',
+    COMPILER_IMAGE: 'Image Graph',
 
     FORUM: 'Forum',
     ASK_FORUM: 'Tanyakan Sesuatu',

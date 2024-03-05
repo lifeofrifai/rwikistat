@@ -75,23 +75,6 @@ const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
         }
       }
 
-      const Action = [
-        {
-          text: "Compiler",
-          icon: <MaterialCommunityIcons name='eye' size={20} color="#fff" />,
-          name: "bt_compiler",
-          position: 2,
-          screen : "ROUTES.COMPILER_MODULE"
-        },
-        {
-          text: "Shinny Compiler",
-          icon: <MaterialCommunityIcons name='eye' size={20} color="#fff" />,
-          name: "bt_shinny_compiler",
-          position: 1,
-          screen : "ROUTES.COMPILER_MODULE"
-        }
-      ];
-
     return (
       <SafeAreaView className="flex-1 bg-[#EBEBEB]">
         {detailModul? (
@@ -102,12 +85,11 @@ const DetailModulScreen: React.FC<DetailModulScreenProps> = ({ route }) => {
             judulModul={detailModul.data.judulModul}  
           />
           <FloatingAction
-            actions={Action}
+            // actions={Action}
+            onPressMain={() => navigation.navigate(ROUTES.COMPILER_MODULE, {code: detailModul.data.codeSampel})}
             color="#00726B"
             floatingIcon={<MaterialCommunityIcons name='code-braces' size={26} color="#fff" />}
-            onPressItem={(screen: any) => {
-              console.log(`selected button: ${screen}`);
-            }}
+            overlayColor="none"
           />
         </SafeAreaView>
         ) : (

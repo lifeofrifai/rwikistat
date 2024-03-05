@@ -7,7 +7,7 @@ import TabNavigator from './TabNavigator';
 import MyPostScreen from '../screens/tab/settings/myPost';
 import BookmarksScreen from '../screens/tab/settings/bookmarks';
 import AboutScreen from '../screens/tab/settings/about';
-import OutputScreen from '../screens/tab/compiler/output';
+import ImageGraphScreen from '../screens/tab/compiler/imageGraph';
 import ChatBotScreen from '../screens/tab/modul/chatBot';
 import ModulDetailScreen from '../screens/tab/modul/detailModul';
 import AskForumScreen from '../screens/tab/forum/askForum';
@@ -39,10 +39,10 @@ function AuthNavigator() {
                 <Stack.Screen name={ROUTES.SETTING_MYPOST} component={MyPostScreen} />
                 <Stack.Screen name={ROUTES.SETTING_BOOKMARK} component={BookmarksScreen} />
                 <Stack.Screen name={ROUTES.SETTING_ABOUT} component={AboutScreen} />
-                <Stack.Screen name={ROUTES.COMPILER_OUTPUT} component={OutputScreen} />
                 <Stack.Screen name={ROUTES.MODUL_DETAIL} component={ModulDetailScreen} />
                 <Stack.Screen name={ROUTES.DETAIL_FORUM} component={DetailForumScreen} />
                 <Stack.Screen name={ROUTES.USER_PROFILE} component={UserProfileScreen} />
+                <Stack.Screen name={ROUTES.COMPILER_IMAGE} component={ImageGraphScreen} />
             </Stack.Group>
             <Stack.Group screenOptions={{presentation: 'modal'}}>
                 <Stack.Screen name={ROUTES.CHAT_BOT} component={ChatBotScreen}/>

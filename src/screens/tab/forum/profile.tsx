@@ -113,61 +113,30 @@ interface ProfileScreenProps {
 
     const fetchPosted = async (page: number | undefined) => { 
         try {
-                // Mendapatkan token dari localStorage atau sumber lainnya
-            const storedToken = AsyncStorage.getItem('customToken');
+            const userToken = await AsyncStorage.getItem('userToken');
 
-            // Membuat header dengan menyertakan token
-            const headers = {
-                Authorization: `Bearer ${storedToken}`,
-            };
-
-            const url = `http://localhost:8080/api/forum/posted/${userId}?page=${page}`;
-            const response = await axios.get(url, {headers});
-            if (response.status === 200) {
-                const { forumData, currentPage, totalPages, totalPosts } = response.data;
-                setForumData(forumData);
-                setCurrentPage(currentPage);
-                setTotalPages(totalPages);
-                setTotalPosts(totalPosts);
-            } else {
-                console.error('Gagal mendapatkan postingan yang diposting:', response.statusText);
-            }
+            fetch(API.address + `/api/forum/posted/${userId}?page=${page}`, {
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+            })
+            .then((response) => response.json())
+            .then((responJson)=>{
+                setForumData(responJson.forumData);
+                setCurrentPage(responJson.currentPage);
+                setTotalPages(responJson.totalPages);
+                setTotalPosts(responJson.totalPosts);
+            })
             
         } catch (error) {
             console.error('Gagal mengambil data:', error);
         }
     };
 
-    // const fetchPosted = async (page: number | undefined) => {
-    //     try {
-    //         const storedToken = await AsyncStorage.getItem('customToken');
-    //         fetch(API.address + `/api/forum/posted/${userId}/?page=${page}`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${storedToken}`,
-    //             },
-    //         })
-    //             .then((response) => {
-    //                 if (!response.ok) {
-    //                     throw new Error('Gagal mengambil data postingan.');
-    //                 }
-    //                 return response.json();
-    //             })
-    //             .then((data) => {
-    //                 const { forumData, currentPage, totalPages, totalPosts } = data;
-    //                 setForumData(forumData);
-    //                 setCurrentPage(currentPage);
-    //                 setTotalPages(totalPages);
-    //                 setTotalPosts(totalPosts);
-    //                 console.log("Data Postingan Diambil");
-    //             }).catch((error) => {
-    //                 console.error('Gagal mendapatkan postingan yang diposting', error);
-    //             });
-    //     } catch (error) {
-    //         console.error('There was an error!', error);
-    //     }
-    // }
     console.log("Data Postingan",forumData);  
     console.log("Is User Verivied? :",detailUser?.verified);
+
+    const navigation = useNavigation();
 
 
     return (
@@ -208,11 +177,12 @@ interface ProfileScreenProps {
                 <View className="h-[2] bg-gray-200 w-full rounded-full"/>
                 <View className="py-2 gap-2"> 
                     <View className="py-2 px-20  items-center rounded-full">
-                        <Text className="text-base">5 Post In Forum</Text> 
+                        <Text className="text-base text-black">5 Post In Forum</Text> 
                     </View>
                 </View>
             </View>
             <FlatList
+                className="w-full"
                 data={currentPosted}
                 renderItem={({ item }) => (
                     <ForumPost
@@ -221,7 +191,7 @@ interface ProfileScreenProps {
                         timePost={item.data.createdAt._seconds}
                         titlePost={item.data.title}
                         descPost={item.data.topics}
-                        onPressPost={undefined}
+                        onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })} 
                         onPressProfile={undefined}
                         imagePost={item.data.images[0]}
                         verified={item.user.verified}

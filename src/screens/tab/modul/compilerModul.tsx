@@ -7,7 +7,7 @@ import MiniPrimaryButton from "../../../components/button/MiniPrimaryButton";
 import ROUTES from "../../../constans/routes";
 import { useNavigation } from '@react-navigation/native';
 import Modal from "react-native-modal";
-import { useState } from 'react';
+import React, { useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../../../api.json";
 import { ActionCodeURL } from 'firebase/auth/cordova';
@@ -17,8 +17,25 @@ NativeWindStyleSheet.setOutput({
     default: "native",
 });
 
+interface CompilerModulScreenProps {
+    route: {
+      params?: {
+        code?: string;
+      };
+    };
+  }
 
-export default () => {
+const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
+    const modulCode = route.params?.code;
+    if (modulCode === undefined) {
+        // Handle the case where code is not available
+        return (
+            <View>
+                <Text>Modul Code is not available</Text>
+            </View>
+        );
+    }
+
     const keyboard = useKeyboard();
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
@@ -27,7 +44,7 @@ export default () => {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [response, setResponse] = useState('');
 
-    const [code, setCode] = useState('#Write Your R Code Here # png("out.png", width = 800, height = 600)');
+    const [code, setCode] = useState('');
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
@@ -121,7 +138,7 @@ export default () => {
                     language= 'r'
                     syntaxStyle={CodeEditorSyntaxStyles.atomOneLight}
                     showLineNumbers
-                    initialValue='#Write Your R Code Here # png("out.png", width = 800, height = 600)'
+                    initialValue={modulCode}
                 />
             </View>
         </TouchableWithoutFeedback>
@@ -129,3 +146,5 @@ export default () => {
         </SafeAreaView>
     );
 }
+
+export default CompilerModulScreen;

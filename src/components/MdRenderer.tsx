@@ -15,7 +15,7 @@ const MdRenderer = ({
     judulModul,
 }:MdRenderer) => {
     return(
-        <ScrollView className="bg-white mt-1 px-4">
+        <ScrollView className="bg-white mt-1 px-4 pb-2">
             <Text className="text-lg font-semibold text-mainGreen ">{namaModul}: {judulModul}</Text>
             <Markdown style={mdStyle}>
                 {idMarkdown}

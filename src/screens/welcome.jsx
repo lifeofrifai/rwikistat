@@ -64,7 +64,7 @@ export default () => {
                     />
                 </View>
                 <View className="absolute bottom-40  p-6 items-center justify-center">
-                    <Text className="text-5xl text-white font-bold">
+                    <Text className="text-[12vw] py-6 leading-10 text-white font-bold">
                         Belajar Statistika Lebih Mudah Dengan RwikiStat
                     </Text>
                 </View>

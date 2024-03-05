@@ -41,19 +41,19 @@ function TabsNavigator() {
                 component={ModulScreen} 
                 options={{
                     tabBarIcon: ({ color }) => <MaterialIcons name="menu-book" size={26} color={color} />,
-                    // headerRight: () => (
-                    //     <Pressable onPress={() => navigation.navigate(ROUTES.CHAT_BOT)} >
-                    //         {({pressed}) => (
-                    //             <Ionicons
-                    //             onPress={undefined}
-                    //             name="chatbox-ellipses"
-                    //             size={25}
-                    //             color={"#00726B"}
-                    //             style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                    //         />
-                    //         )}
-                    //     </Pressable>
-                    // ),
+                    headerRight: () => (
+                        <Pressable onPress={() => navigation.navigate(ROUTES.CHAT_BOT)} >
+                            {({pressed}) => (
+                                <Ionicons
+                                onPress={undefined}
+                                name="chatbox-ellipses"
+                                size={25}
+                                color={"#00726B"}
+                                style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                            />
+                            )}
+                        </Pressable>
+                    ),
                 }}
             />
             <Tab.Screen
@@ -61,6 +61,19 @@ function TabsNavigator() {
                 component={CompilerScreen}
                 options={{
                     tabBarIcon: ({ color }) => <MaterialCommunityIcons name="code-array" size={26} color={color} />,
+                    headerRight: () => (
+                        <Pressable onPress={() => navigation.navigate(ROUTES.COMPILER_IMAGE)} >
+                            {({pressed}) => (
+                                <MaterialCommunityIcons
+                                onPress={undefined}
+                                name="image-search"
+                                size={25}
+                                color={"#00726B"}
+                                style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                            />
+                            )}
+                        </Pressable>
+                    ),
                 }} 
             />
             <Tab.Screen 

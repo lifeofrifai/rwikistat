@@ -29,6 +29,7 @@ interface ForumData {
     user:{
         displayName: string;
         photoURL: string;
+        verified: boolean;  
     }
     commentCount: number;
 }
@@ -48,9 +49,9 @@ export default () => {
     const fetchData = async (page: number | undefined) => {
         try {
             const user = firebase.auth().currentUser;
-            const userId = user?.uid;
+            const uid = user?.uid;
             const userToken = await AsyncStorage.getItem('userToken');
-            fetch(API.address + `/api/forum/posted/${userId}?page=${page}`, {
+            fetch(API.address + `/api/forum/posted/${uid}?page=${page}`, {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
                 },
@@ -61,6 +62,7 @@ export default () => {
                 setCurrentPage(responJson.currentPage);
                 setTotalPages(responJson.totalPages);
                 setRefreshing(false);
+                console.log(responJson);
             })
         } catch (error) {
             console.error('Gagal mengambil data:', error);
@@ -99,7 +101,7 @@ export default () => {
                             onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })}
                             onPressProfile={undefined}
                             imagePost={undefined}
-                            verified={true}
+                            verified={item.user.verified}
                             id={item.id}
                             likes={item.data.likes}
                             comments={undefined}                        
