@@ -121,7 +121,7 @@ export default () => {
         <View className="flex-1 items-center bg-[#EBEBEB] ">
             <View className="bg-white w-full mt-2 px-5 py-2 ">
                 
-                <View className="flex-row gap-x-3 py-5 items-center">
+                {/* <View className="flex-row gap-x-3 py-5 items-center">
                     <Image
                         source={{
                             uri: detailUser?.photoURL
@@ -142,7 +142,7 @@ export default () => {
                             <StarRating score={score}/>
                         </View>
                     </View>
-                </View>
+                </View> */}
                 
                 
                 <View className="h-[2] bg-gray-200 w-full rounded-full"/>
