@@ -41,6 +41,12 @@ const ForumPost = ({
     const date = new Date(timePost * 1000);
     const timeNow = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false, day: 'numeric', month: 'long', year: 'numeric'});
 
+    // if (imagePost == null) {
+    //     console.log("Tidak ada gambar")
+    // } else {
+    //     console.log("Ada gambar")
+    // }
+
     return(
         <View className="w-full bg-white px-4 mt-2">
             <View className="flex-row py-2 justify-between" >
@@ -66,12 +72,12 @@ const ForumPost = ({
                         </Text>
                     </View>
                 </Pressable>
-                <Ionicons
+                {/* <Ionicons
                     onPress={() => toast.show("Link Postingan disalin", { duration: 2000, type: "success" })}
                     name={"link"}
                     size={20}
                     color={"black"}
-                />
+                /> */}
             </View>
             <Pressable
                 className="pb-4 pt-2"
@@ -83,12 +89,16 @@ const ForumPost = ({
                 <Text className="text-gray-500 text-sm">
                     {descPost}
                 </Text>
-                <Image
-                    source={{
-                        uri: imagePost
-                    }}
-                    className="w-full"
-                />
+                {
+                imagePost == null ? ("") : (
+                    <Image
+                        source={{
+                            uri: imagePost
+                        }}
+                        className="w-full h-[300]"
+                    />
+                )
+                }
             </Pressable>
             <View className="h-[1] bg-gray-200 w-full rounded-full"/>
             <View className="flex-row  py-2 items-center justify-between" >

@@ -58,13 +58,13 @@ export default () => {
                         className="w-[180] h-[180] absolute"
                         style={{transform: [
                             { translateX: 110 },
-                            { translateY: 270 },
+                            { translateY: 260 },
                             { rotate: "-28deg" }
                         ]}}
                     />
                 </View>
-                <View className="absolute bottom-40  p-6 items-center justify-center">
-                    <Text className="text-[12vw] py-6 leading-10 text-white font-bold">
+                <View className="absolute bottom-28  p-4 items-center justify-center">
+                    <Text className="text-[12vw] py-5 leading-10 text-white font-bold">
                         Belajar Statistika Lebih Mudah Dengan RwikiStat
                     </Text>
                 </View>

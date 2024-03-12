@@ -7,8 +7,10 @@ NativeWindStyleSheet.setOutput({
 
 export default () => {
     return (
-        <View className="flex-1 items-center justify-center bg-[#EBEBEB] ">
-            <Text>About Rwikistat Screen</Text>
+        <View className="flex-1 items-center bg-[#EBEBEB] ">
+            <View className="w-full bg-white h-32 mt-2">
+                <Text className="text-black text-center">About Rwikistat Screen</Text>
+            </View>
         </View>
         
     );

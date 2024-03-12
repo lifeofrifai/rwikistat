@@ -109,7 +109,7 @@ const LikedButton: React.FC<{ itemId: string }> =({ itemId }) =>{
                       console.log('API Response:', responJson);
                       setLikedButton(false);
                       setIsLoading(false);
-                      toast.show("Batal Menyukai Postingan", { duration: 2000, type: "success" })
+                      toast.show("Batal Menyukai Postingan", { duration: 2000, type: "error" })
                   })
                 } else {
                   // Pengguna belum masuk, jangan lakukan apa-apa

@@ -29,6 +29,7 @@ interface ForumData {
     user:{
         displayName: string;
         photoURL: string;
+        verified: boolean;
     }
     commentCount: number;
 }
@@ -100,8 +101,8 @@ export default () => {
                             descPost={item.data.topics}
                             onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })}
                             onPressProfile={() => navigation.navigate(ROUTES.USER_PROFILE, { id: item.data.uid })}
-                            imagePost={undefined}
-                            verified={true}
+                            imagePost={item.data.images[0]}
+                            verified={item.user.verified}
                             id={item.id}
                             likes={item.data.likes}
                             comments={undefined}                       

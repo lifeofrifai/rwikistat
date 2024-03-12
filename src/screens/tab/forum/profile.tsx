@@ -172,12 +172,11 @@ interface ProfileScreenProps {
                     </View>
                 )}
                 
-                
-                
                 <View className="h-[2] bg-gray-200 w-full rounded-full"/>
+
                 <View className="py-2 gap-2"> 
                     <View className="py-2 px-20  items-center rounded-full">
-                        <Text className="text-base text-black">5 Post In Forum</Text> 
+                        <Text className="text-base text-black">{jumlahCurrentPosted} Post In Forum</Text> 
                     </View>
                 </View>
             </View>

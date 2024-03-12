@@ -127,7 +127,7 @@ export default () => {
                                 descPost={item.data.topics}
                                 onPressPost={() => navigation.navigate(ROUTES.DETAIL_FORUM, { id: item.id })} 
                                 onPressProfile={() => navigation.navigate(ROUTES.USER_PROFILE, { id: item.data.uid })}
-                                imagePost={undefined}   
+                                imagePost={item.data.images[0]}   
                                 verified={item.user.verified}
                                 id={item.id}
                                 likes={item.data.likes}

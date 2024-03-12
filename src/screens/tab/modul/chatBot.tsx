@@ -25,6 +25,7 @@ interface ChatData {
 export default () => {
     const [userMessage, setUserMessage] = useState("");
     const [chatData, setChatData] = useState<ChatData[]>([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
       fetchChatData();
@@ -82,6 +83,7 @@ export default () => {
 
       const handleChatSubmit = async () => {
         console.log("Submitting chat...");
+        setLoading(true);
         const storedToken = await AsyncStorage.getItem('userToken');
         // Dapatkan ID user
         const user = firebase.auth().currentUser;
@@ -103,11 +105,12 @@ export default () => {
     
         // Refresh data chatbot setelah submit berhasil
         await refreshChatbotData();
+        setLoading(false);
       };
 
 
     return (
-        <SafeAreaView className='flex-1 justify-end bg-white'>
+        <View className='flex-1 justify-end bg-white'>
         {/* <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} /> */}
 
         <KeyboardAvoidingView
@@ -117,16 +120,16 @@ export default () => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View className='w-full'>
                 <ScrollView className='w-full mb-5'>
-                {chatData.map((chat) => (
+                {chatData.slice().reverse().map((chat) => (
                     <View key={chat.id} className='mt-5 '>
                         <View className='flex items-end mb-2 mr-2'>
-                            <View className='bg-gray-300 px-5 py-3 rounded-l-2xl rounded-br-2xl'>
-                                <Text className=''>{chat.message} </Text>
+                            <View className='bg-gray-400 px-5 py-3 rounded-l-2xl rounded-br-2xl'>
+                                <Text className='text-white font-medium'>{chat.message} </Text>
                             </View>
                         </View>
-                        <View className='flex items-start mb-2 ml-2'>
-                            <View className='bg-emerald-600 px-5 py-3 rounded-r-2xl rounded-bl-2xl'>
-                                <Text className=''>{chat.response}</Text>
+                        <View className='flex items-start mb-2 mx-2'>
+                            <View className='bg-mainGreen px-5 py-3 rounded-r-2xl rounded-bl-2xl'>
+                                <Text className='text-white'>{chat.response}</Text>
                             </View>
                         </View>
                     </View>
@@ -137,7 +140,7 @@ export default () => {
                 
                 <View className=" bg-gray-100 bottom-0 flex-row m-auto w-full justify-center items-center  px-[70] py-5  " >
                     <TextInput
-                        className= "flex-row w-full rounded-md border justify-between h-10 items-center border-gray-400 p-3 mr-3"
+                        className= "bg-white text-black flex-row w-full rounded-md border justify-between h-10 items-center border-gray-400 p-3 mr-3"
                         placeholder="Masukkan pesan Anda..."
                         placeholderTextColor="#aaa"
                         value={userMessage}
@@ -148,14 +151,14 @@ export default () => {
                             icon={undefined}
                             onPress={handleChatSubmit}
                             disabled={undefined}
-                            loading={undefined}             
+                            loading={loading}             
                         />
                 </View>
                 
             </View>
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-        </SafeAreaView>
+        </View>
         
     );
 }

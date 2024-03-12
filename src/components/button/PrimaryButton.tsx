@@ -27,7 +27,7 @@ const PrimaryButton = ({
             {...props}
         >
             {loading ? (
-                <ActivityIndicator size="small" color="#000" />
+                <ActivityIndicator size="small" color="#fff" />
             ) : (
                 <>
                     {/* {icon && (

@@ -7,17 +7,12 @@ import MiniPrimaryButton from "../../../components/button/MiniPrimaryButton";
 import ROUTES from "../../../constans/routes";
 import { useNavigation } from '@react-navigation/native';
 import Modal from "react-native-modal";
-import {
-    createStackNavigator,
-    HeaderStyleInterpolators,
-    type StackNavigationOptions,
-    type StackScreenProps,
-  } from '@react-navigation/stack';
 import { useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../../../api.json";
 import { ActionCodeURL } from 'firebase/auth/cordova';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Buffer } from 'buffer';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -60,7 +55,7 @@ export default () => {
           if (contentType && contentType.includes('image/png')) {
             // If it's an image, set the response as an image source
             const newImageUrl = await response.text();
-            console.log(newImageUrl);
+            console.log("ini alamat image :",newImageUrl);
             setImageUrl(newImageUrl);
             setModalVisible(!isModalVisible);
         } else {
@@ -74,6 +69,8 @@ export default () => {
             setResponse('Terjadi kesalahan saat mengirim kode.');
         }
     };
+    
+
 
 
     return (
@@ -103,7 +100,12 @@ export default () => {
                             <Text className='text-center text-mainGreen text-lg font-medium'>Output</Text>
                             {/* Conditional rendering based on content type */}
                             {imageUrl ? (
-                                <Image src={imageUrl} alt="Output" className="h-full p-5" />
+                                <Image
+                                    source={{
+                                        uri: imageUrl,
+                                    }}
+                                    alt="Output"
+                                    className="w-full h-20 p-5" />
                             ) : (
                                 <Text className="text-green-600">{response}</Text>
                             )}

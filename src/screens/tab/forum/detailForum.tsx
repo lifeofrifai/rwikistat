@@ -188,6 +188,9 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
     //     }
     // }
 
+    // console.log("URL Image Postingan: ",detailForum.data.images[0])
+    // console.log("Profile Pengguna: ",detailForum.user.photoURL)
+
     return (
         <ToastProvider>
         <View className="flex-1 items-center bg-[#EBEBEB] ">
@@ -201,11 +204,11 @@ const DetailForumScreen: React.FC<DetailForumScreenProps> = ({ route }) => {
                 descPost={detailForum.data.topics}
                 onPressPost={undefined}
                 onPressProfile={undefined}
-                imagePost={detailForum.user.photoURL}
+                imagePost={detailForum.data.images[0]}
                 verified={detailForum.user.verified}
                 likes={detailForum.data.likes}
                 id={detailForum.id}
-                comments={detailForum.commentCount}           
+                comments={detailForum.commentCount}
               />
               <View className="flex-row m-auto w-full justify-center items-center  bg-white px-16 py-4">
                   <TextInput

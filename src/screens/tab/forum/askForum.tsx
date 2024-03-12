@@ -53,6 +53,7 @@ export default () => {
     images: [],
     uid: '',
   }); 
+  const [loading, setLoading] = useState(false);
 
 
   const handleInputChange = (name: string, value: string) => {
@@ -66,8 +67,8 @@ export default () => {
   const pickImage = async () => {
     try {
       const image = await ImagePicker.openPicker({
-        width: 300,
-        height: 400,
+        width: 400,
+        height: 300,
         cropping: true
       });
   
@@ -80,6 +81,7 @@ export default () => {
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
         try {
+          setLoading(true);
           const formData = new FormData();
           const user = firebase.auth().currentUser;
           formData.append('topics', newPost.topics);
@@ -117,67 +119,13 @@ export default () => {
 
             // Bersihkan daftar gambar yang dipilih
           setImages([]);
-        
+          setLoading(false);
+          // toast.show("Postingan berhasil ditambahkan", { duration: 2000, type: "success" })
         } catch (error) {
           console.error('Gagal menambahkan postingan:', error);
         }
       };
 
- 
-      
-
-
-    
-    // const [selectedImage, setSelectedImage] = useState(null);
-
-    // const openImagePicker = () => {
-    //     const options = {
-    //         mediaType: 'photo',
-    //         includeBase64: false,
-    //         maxHeight: 2000,
-    //         maxWidth: 2000,
-    //     };
-    
-    //     launchImageLibrary(options, (response) => {
-    //         if (response.didCancel) {
-    //             console.log('User cancelled image picker');
-    //         } else if (response.error) {
-    //             console.log('Image picker error: ', response.error);
-    //         } else {
-    //             let imageUri = response.uri || response.assets?.[0]?.uri;
-    //             setSelectedImage(imageUri);
-    //             console.log('imageUri', imageUri);
-                  // setNewPost({
-                  //         ...newPost,
-                  //         images: [...newPost.images, imageUri],
-                  //       });
-                  //       setImage(imageUri);
-    //         }
-    //     });
-    // };
-
-    // const handleCameraLaunch = () => {
-    //     const options = {
-    //       mediaType: 'photo',
-    //       includeBase64: false,
-    //       maxHeight: 2000,
-    //       maxWidth: 2000,
-    //     };
-      
-    //     launchCamera(options, response => {
-    //       console.log('Response = ', response);
-    //       if (response.didCancel) {
-    //         console.log('User cancelled camera');
-    //       } else if (response.error) {
-    //         console.log('Camera Error: ', response.error);
-    //       } else {
-    //         // Process the captured image
-    //         let imageUri = response.uri || response.assets?.[0]?.uri;
-    //         setSelectedImage(imageUri);
-    //         console.log(imageUri);
-    //       }
-    //     });
-    //   }
     
     return (
         <ToastProvider>
@@ -244,7 +192,7 @@ export default () => {
                 {images.map((image) => (
                     <Image
                         source={{ uri: image }}
-                        style={{ width: 200, height: 200, marginTop: 15 }}
+                        style={{ width: 350, height: 250, marginTop: 15 }}
                     />
                 ))}
             </View>
@@ -254,7 +202,7 @@ export default () => {
                     icon={undefined}
                     onPress={handleSubmit} 
                     disabled={undefined} 
-                    loading={undefined}
+                    loading={loading}
                 />
             </View>
 
