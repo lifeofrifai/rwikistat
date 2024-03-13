@@ -52,13 +52,31 @@ export default () => {
         setImageUrl(null);
     
         // Check if the response is an image
-          const contentType = response.headers.get('content-type');
-          if (contentType && contentType.includes('image/png')) {
-            // If it's an image, set the response as an image source
-            const newImageUrl = await response.text();
-            setImageUrl(newImageUrl);
-            setModalVisible(!isModalVisible);
-        } else {
+        //   const contentType = response.headers.get('content-type');
+        //   if (contentType && contentType.includes('image/png')) {
+        //     // If it's an image, set the response as an image source
+        //     const blob = await response.blob();
+        //     console.log('blob',blob);
+        //     const newImageUrl = URL.createObjectURL(blob);
+        //     setImageUrl(newImageUrl);
+        //     setModalVisible(!isModalVisible);
+        // } 
+        const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('image/png')) {
+        // If it's an image, set the response as an image source
+        const blob = await response.blob();
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = reader.result;
+          if (typeof result === 'string') {
+            const base64data = result.split(',')[1];
+            setImageUrl(base64data);
+          }
+        };
+        reader.readAsDataURL(blob);
+        setModalVisible(!isModalVisible);
+
+      }else {
             // If it's not an image, set the response as text
             const data = await response.text();
             setResponse(data);
@@ -69,10 +87,7 @@ export default () => {
             setResponse('Terjadi kesalahan saat mengirim kode.');
         }
     };
-    
-    const binaryImageData = imageUrl
-    const base64Image = `data:image/png;base64,${binaryImageData}`;
-    console.log(base64Image);
+    const base64Image = `data:image/png;base64,${imageUrl}`;
 
 
 
