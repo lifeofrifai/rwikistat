@@ -13,6 +13,7 @@ import API from "../../../../api.json";
 import { ActionCodeURL } from 'firebase/auth/cordova';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Buffer } from 'buffer';
+import BlobImageViewer from '../../../components/BlobImageViewer';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -55,7 +56,6 @@ export default () => {
           if (contentType && contentType.includes('image/png')) {
             // If it's an image, set the response as an image source
             const newImageUrl = await response.text();
-            console.log("ini alamat image :",newImageUrl);
             setImageUrl(newImageUrl);
             setModalVisible(!isModalVisible);
         } else {
@@ -70,6 +70,9 @@ export default () => {
         }
     };
     
+    const binaryImageData = imageUrl
+    const base64Image = `data:image/png;base64,${binaryImageData}`;
+    console.log(base64Image);
 
 
 
@@ -102,10 +105,12 @@ export default () => {
                             {imageUrl ? (
                                 <Image
                                     source={{
-                                        uri: imageUrl,
+                                        uri: base64Image,
                                     }}
                                     alt="Output"
-                                    className="w-full h-20 p-5" />
+                                    className="w-full h-20 p-5"
+                                />
+                                // <BlobImageViewer blobData={imageUrl}/>
                             ) : (
                                 <Text className="text-green-600">{response}</Text>
                             )}

@@ -1,6 +1,5 @@
 import { Text, Pressable, ActivityIndicator } from "react-native";
 import React from "react";
-import { FontAwesome } from "@expo/vector-icons";
 
 interface PrimaryButton{
     label : any,
@@ -30,13 +29,6 @@ const PrimaryButton = ({
                 <ActivityIndicator size="small" color="#fff" />
             ) : (
                 <>
-                    {/* {icon && (
-                        <FontAwesome
-                            name={icon}
-                            size={18}
-                            style={{ marginRight: 10, color : "white" }}
-                        />
-                    )} */}
                     <Text className=" text-base font-medium text-white">{label}</Text>
                 </>
             )}

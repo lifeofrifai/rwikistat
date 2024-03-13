@@ -201,7 +201,7 @@ export default () => {
                     label="Tanyakan"
                     icon={undefined}
                     onPress={handleSubmit} 
-                    disabled={undefined} 
+                    disabled={!newPost.title || !newPost.topics} 
                     loading={loading}
                 />
             </View>
