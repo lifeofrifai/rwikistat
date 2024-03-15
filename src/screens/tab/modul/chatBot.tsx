@@ -5,6 +5,7 @@ import API from "../../../../api.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, FormEvent, useEffect, SetStateAction } from "react";
 import auth, { firebase } from '@react-native-firebase/auth';
+import { useRef } from 'react';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -108,6 +109,7 @@ export default () => {
         setLoading(false);
       };
 
+      const scrollViewRef = useRef();
 
     return (
         <View className='flex-1 justify-end bg-white'>
@@ -119,8 +121,12 @@ export default () => {
         >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View className='w-full'>
-                <ScrollView className='w-full mb-5'>
-                {chatData.slice().reverse().map((chat) => (
+                <ScrollView
+                  className='w-full mb-5'
+                  ref={scrollViewRef}
+                  onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+                >
+                {chatData.map((chat) => (
                     <View key={chat.id} className='mt-5 '>
                         <View className='flex items-end mb-2 mr-2'>
                             <View className='bg-gray-400 px-5 py-3 rounded-l-2xl rounded-br-2xl'>

@@ -1,19 +1,20 @@
 import CodeEditor, { CodeEditorSyntaxStyles } from '@rivascva/react-native-code-editor';
 import { NativeWindStyleSheet } from "nativewind";
-import { View, Text, SafeAreaView, KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard, Button, Image } from "react-native";
+import { View, Text, SafeAreaView, KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard, Button, Image, TextInput } from "react-native";
 import { useKeyboard } from '@react-native-community/hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MiniPrimaryButton from "../../../components/button/MiniPrimaryButton";
 import ROUTES from "../../../constans/routes";
 import { useNavigation } from '@react-navigation/native';
 import Modal from "react-native-modal";
-import { useState } from 'react';
+import React, { useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "../../../../api.json";
 import { ActionCodeURL } from 'firebase/auth/cordova';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Buffer } from 'buffer';
 import BlobImageViewer from '../../../components/BlobImageViewer';
+import SelectDropdown from 'react-native-select-dropdown'
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -28,12 +29,22 @@ export default () => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [response, setResponse] = useState('');
+    const [compilerType, setCompilerType] = useState('String');
+    const [fileName, setFileName] = useState('')
 
     const [code, setCode] = useState('#Write Your R Code Here # png("out.png", width = 800, height = 600)');
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
+
+    // const handelSimpan = async () => {
+    //     if (imageData) {
+    //         saveImageToDatabase(imageData);
+        
+    //     }
+    // }
+
 
 
     const handleCompile = async () => {
@@ -50,17 +61,7 @@ export default () => {
       
         // Reset imageUrl to null before processing new response
         setImageUrl(null);
-    
-        // Check if the response is an image
-        //   const contentType = response.headers.get('content-type');
-        //   if (contentType && contentType.includes('image/png')) {
-        //     // If it's an image, set the response as an image source
-        //     const blob = await response.blob();
-        //     console.log('blob',blob);
-        //     const newImageUrl = URL.createObjectURL(blob);
-        //     setImageUrl(newImageUrl);
-        //     setModalVisible(!isModalVisible);
-        // } 
+
         const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('image/png')) {
         // If it's an image, set the response as an image source
@@ -89,7 +90,7 @@ export default () => {
     };
     const base64Image = `data:image/png;base64,${imageUrl}`;
 
-
+const dropdownData = ["Graph", "String"]
 
     return (
         <SafeAreaView className="flex-1 bg-[#EBEBEB] ">
@@ -100,6 +101,20 @@ export default () => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View>
                 <View className="flex-row justify-end h-[70]  bg-white px-5 py-4" >
+                    <SelectDropdown
+                        data={dropdownData}
+                        onSelect={(selectedItem) => {
+                            console.log(selectedItem)
+                            setCompilerType(selectedItem)
+                        }}
+                        dropdownStyle={{width: 200, shadowColor: "#000", shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, marginTop: -40,}}
+                        buttonStyle={{width: 100, height: 38, backgroundColor: "#00726B", borderRadius: 5, marginLeft: 10,}}
+                        buttonTextStyle={{color: "#fff", fontSize: 14, fontWeight: "bold",}}
+                        rowStyle={{backgroundColor: "#fff", borderBottomColor: "#C5C5C5", borderBottomWidth: 1,}}
+                        rowTextStyle={{color: "#000", fontSize: 14,}}
+                        dropdownOverlayColor='rgba(0,0,0,0.5)'
+                        
+                    />
                     <MiniPrimaryButton
                         label="Compile"
                         icon="play-circle"
@@ -118,21 +133,41 @@ export default () => {
                             <Text className='text-center text-mainGreen text-lg font-medium'>Output</Text>
                             {/* Conditional rendering based on content type */}
                             {imageUrl ? (
-                                <Image
-                                    source={{
-                                        uri: base64Image,
-                                    }}
-                                    alt="Output"
-                                    className="w-full h-20 p-5"
-                                />
-                                // <BlobImageViewer blobData={imageUrl}/>
+                                <View className='items-center  '>
+                                    <View className=" flex-row m-auto w-full justify-center items-center  px-[65] py-5  " >
+                                        <TextInput
+                                            className= "bg-white text-black flex-row w-full rounded-md border justify-between h-10 items-center border-gray-400 p-3 mr-3"
+                                            placeholder="Simpan gambar anda..."
+                                            placeholderTextColor="#aaa"
+                                            value={fileName}
+                                            onChangeText={(e)=>setFileName(e)}
+                                            
+                                        />
+                                            <MiniPrimaryButton
+                                                label="Simpan"
+                                                icon={undefined}
+                                                onPress={undefined}
+                                                disabled={undefined}
+                                                loading={undefined}             
+                                            />
+                                    </View>
+                                    <Image
+                                        source={{
+                                            uri: base64Image,
+                                        }}
+                                        alt="Output"
+                                        className="w-[370px] h-[270px]"
+                                    />
+                                    
+                                </View>
                             ) : (
-                                <Text className="text-green-600">{response}</Text>
+                                <Text className="text-green-600 mt-5">{response}</Text>
                             )}
                         </ScrollView>
                     </Modal>
                 </View>
-                <CodeEditor
+                {compilerType === "Graph" && (
+                    <CodeEditor
                     style={{
                         ...{
                             fontSize: 14,
@@ -149,8 +184,30 @@ export default () => {
                     language= 'r'
                     syntaxStyle={CodeEditorSyntaxStyles.atomOneLight}
                     showLineNumbers
-                    initialValue='#Write Your R Code Here # png("out.png", width = 800, height = 600)'
+                    initialValue='png("out.png", width = 800, height = 600)'
                 />
+                )}
+                {compilerType === "String" && (
+                    <CodeEditor
+                    style={{
+                        ...{
+                            fontSize: 14,
+                            inputLineHeight: 26,
+                            highlighterLineHeight: 26,
+                            lineNumbersColor:"#00726B",
+                            width: "100%",
+                        },
+                        ...(keyboard.keyboardShown
+                            ? { marginBottom: keyboard.keyboardHeight - insets.bottom }
+                            : {}),
+                    }}
+                    onChange={(newCode) => setCode(newCode)}
+                    language= 'r'
+                    syntaxStyle={CodeEditorSyntaxStyles.atomOneLight}
+                    showLineNumbers
+                    initialValue=''
+                />
+                )}
             </View>
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
