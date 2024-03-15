@@ -1,6 +1,9 @@
-import { Image, Pressable, Text, View } from "react-native"
-import API from "../../api.json"
+import { Image, Pressable, Text, View,TouchableOpacity, Alert , Linking} from "react-native"
+import API from "../../api.json";
+import React, { useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as RNFetchBlob from 'rn-fetch-blob';
+import RNFS from 'react-native-fs';
 
 
 interface GraphImageCard{
@@ -9,11 +12,17 @@ interface GraphImageCard{
     imageUrl: string
 }
 
+
+
 const GraphImageCard = ({
     id,
     imageName,
     imageUrl
 }:GraphImageCard) => {
+
+    const [downloading, setDownloading] = useState(false);
+    const [imageUrl1, setImageUrl1] = useState('');
+
     
     const url = `${API.address}${imageUrl}`;
 
@@ -26,9 +35,9 @@ const GraphImageCard = ({
                 Authorization: `Bearer ${userToken}`,
             };
     
-            const response = await fetch(API.address + `/api/history/${id}`, {
+            const response = await fetch(API.address + `/api/history/delete/${id}`, {
                 method: 'DELETE',
-                headers: header,
+                // headers: header,
             });
     
             if (!response.ok) {
@@ -42,6 +51,43 @@ const GraphImageCard = ({
             // Handle error secara sesuai kebutuhan Anda
         }
     }; 
+
+    // const downloadImage = async () => {
+    //     try {
+    //         const response = await fetch(API.address + `/api/history/download/${id}`, {
+    //             method: 'GET',
+    //             // headers: header,
+    //         });
+    //       const blob = await response.blob();
+    //       const base64: string = await blobToBase64(blob); // Specify base64 as string
+    //       const imagePath = `${RNFS.DocumentDirectoryPath}/your-image-name.png`;
+    //       await RNFS.writeFile(imagePath, base64, 'base64');
+    //       setImageUrl1(imagePath);
+    //       console.log(imagePath)
+    //       Alert.alert('Success', 'Image downloaded successfully');
+    //     } catch (error) {
+    //       Alert.alert('Error', 'Failed to download image');
+    //       console.error('Error downloading image:', error);
+    //     }
+    //   };
+      
+    //   const blobToBase64 = async (blob: Blob): Promise<string> => {
+    //     return new Promise((resolve, reject) => {
+    //       const reader = new FileReader();
+    //       reader.onerror = () => {
+    //         reader.abort();
+    //         reject(new Error("Problem reading blob."));
+    //       };
+    //       reader.onload = () => {
+    //         if (typeof reader.result === 'string') {
+    //           resolve(reader.result);
+    //         } else {
+    //           reject(new Error("Expected result to be a string."));
+    //         }
+    //       };
+    //       reader.readAsDataURL(blob);
+    //     });
+    //   };
 
     return(
         <View className="flex-row w-full bg-white px-4 mt-2 py-2">
@@ -61,7 +107,7 @@ const GraphImageCard = ({
             </Pressable>
             <Pressable 
                 className="bg-mainGreen rounded-md w-24 mt-1"
-                onPress={() => console.log("download")}
+                onPress={undefined}
             >
                 <Text className=" text-white text-base font-medium text-center">Download</Text>
             </Pressable>

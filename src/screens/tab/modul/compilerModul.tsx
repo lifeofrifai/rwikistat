@@ -52,44 +52,84 @@ const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
         setModalVisible(!isModalVisible);
     };
 
-
-    const handleCompile = async () => {
-        try {
-            const userToken = await AsyncStorage.getItem('userToken');
-          const response = await fetch(API.address + '/api/compiler/test/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userToken}`,
-            },
-            body: JSON.stringify({ code }),
-          });
-      
-        // Reset imageUrl to null before processing new response
-        setImageUrl(null);
-    
-        // Check if the response is an image
-          const contentType = response.headers.get('content-type');
-          if (contentType && contentType.includes('image/png')) {
-            // If it's an image, set the response as an image source
-            const newImageUrl = await response.text();
-            console.log(newImageUrl);
-            setImageUrl(newImageUrl);
-            setModalVisible(!isModalVisible);
-        } else {
-            // If it's not an image, set the response as text
-            const data = await response.text();
-            setResponse(data);
-            setModalVisible(!isModalVisible);
-        }
-        } catch (error) {
-            console.error(error);
-            setResponse('Terjadi kesalahan saat mengirim kode.');
-        }
-    };
+    const [urlShiny, setUrlShiny] = useState('');
+    const [selectedPort, setSelectedPort] = useState<{ value: string; label: string } | null>(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const dropdownData = ["4000", "4001", "4002", "4003", "4004", "4005", "4006", "4007", "4008", "4009", "4010", "4011", "4012", "4013", "4014", "4015", "4016", "4017", "4018", "4019", "4020"]
 
+
+    // const handlePortChange = (selectedOption: any) => {
+    //     setSelectedPort(selectedOption);
+    //   };
+
+
+    const handleCompile = async () => {
+        try {
+          
+        //   const port = selectedPort;
+    
+          // Mendapatkan token dari localStorage atau sumber lainnya
+          const storedToken =  await AsyncStorage.getItem('userToken');
+    
+          const response = await fetch(API.address +`/api/compiler/check-port/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              // Authorization: `Bearer ${storedToken}`,
+            },
+            body: JSON.stringify({ port }),
+          });
+    
+          const responseData = await response.json();
+          console.log(responseData);
+          console.log(responseData.status);
+    
+          const status = responseData.status;
+    
+          let shinyPort, shinyUrl;
+    
+          if (status === 'false') {
+            if (port) {
+              shinyUrl = `http://10.38.0.2:${port}`;
+              setUrlShiny(shinyUrl);
+            }
+            const response = await fetch(API.address +`/api/compiler/shiny/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${storedToken}`,
+              },
+              body: JSON.stringify({ code, port }),
+            });
+      
+            const responseData = await response.json();
+      
+            const shinyOutput = responseData.shinyOutput.text;
+            const originalOutput = responseData.originalOutput;
+            Linking.openURL(`http://10.38.0.2:${port}`);
+      
+            // Contoh: Set state atau melakukan operasi lainnya
+            // setOutputDetails(shinyOutput);
+            setResponse(originalOutput);
+      
+          }else if (status === 'true') {
+            console.log('Port is already in use');
+            setErrorMessage('Port is already in use');
+          } else {
+            console.log('Unexpected value for responseData.status:', status);
+          }
+    
+          // Menjalankan kode setelah kondisi status === 'false' tanpa menunggu respon
+          
+          
+        } catch (error) {
+          console.error(error);
+          setResponse('Terjadi kesalahan saat mengirim kode.');
+        }
+      };
+
+    
     const linkShinny = () => {
         Linking.openURL('http://10.38.0.2:4000/');
     }
@@ -120,7 +160,7 @@ const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
                     <MiniPrimaryButton
                         label="Compile"
                         icon="play-circle"
-                        onPress={linkShinny}    
+                        onPress={handleCompile}    
                         disabled={undefined}
                         loading={undefined}             
                     />

@@ -14,11 +14,16 @@ import { ActionCodeURL } from 'firebase/auth/cordova';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Buffer } from 'buffer';
 import BlobImageViewer from '../../../components/BlobImageViewer';
-import SelectDropdown from 'react-native-select-dropdown'
+import SelectDropdown from 'react-native-select-dropdown';
+import auth, { firebase } from '@react-native-firebase/auth';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
 });
+
+interface FileName {
+    [key: string]: string;
+  }
 
 
 export default () => {
@@ -30,7 +35,9 @@ export default () => {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [response, setResponse] = useState('');
     const [compilerType, setCompilerType] = useState('String');
-    const [fileName, setFileName] = useState('')
+    const [imageData, setImageData] = useState<String | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [fileName, setFileName] = useState('');
 
     const [code, setCode] = useState('#Write Your R Code Here # png("out.png", width = 800, height = 600)');
 
@@ -72,9 +79,12 @@ export default () => {
           if (typeof result === 'string') {
             const base64data = result.split(',')[1];
             setImageUrl(base64data);
+            setImageData(base64data);
           }
         };
         reader.readAsDataURL(blob);
+        
+        console.log(imageData)
         setModalVisible(!isModalVisible);
 
       }else {
@@ -89,6 +99,66 @@ export default () => {
         }
     };
     const base64Image = `data:image/png;base64,${imageUrl}`;
+
+    const imageName = (value: string) => {
+        setFileName(value);
+      };
+
+    
+      const handelSimpan = async () => {
+        if (imageData) {
+          saveImageToDatabase(imageData);
+          
+        }
+      }
+
+      const generateDefaultName = () => {
+        const currentTime = new Date();
+        const timestamp = `${currentTime.getFullYear()}${currentTime.getMonth() + 1}${currentTime.getDate()}${currentTime.getHours()}${currentTime.getMinutes()}${currentTime.getSeconds()}`;
+        return `plot_${timestamp}`;
+      };
+
+      const saveImageToDatabase = async (imageData:String) => {
+        try {
+          // Send the image data to your server API for storage in the database
+          const storedToken = await AsyncStorage.getItem('userToken');
+          
+    
+          const formData = new FormData();
+          const user = firebase.auth().currentUser;
+          formData.append('fileName', fileName || generateDefaultName());
+          if (user) {
+            formData.append('uid',user?.uid);
+            }
+          formData.append('image', imageData);
+          setLoading(true);
+          console.log(formData)
+      
+          const response = await fetch(API.address + `/api/history`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+            body: formData,
+          });
+    
+          const responseData = await response.json();
+    
+          if (response.status === 200) {
+            const responseData = await response.json();
+            console.log('Success:', responseData.message);
+            // Display success message to the user
+          } else {
+            console.error('Error:', response.statusText);
+            // Display error message to the user using the status text
+          }
+      
+          console.log('Image saved to database successfully');
+          setLoading(false);
+        } catch (error) {
+          console.error('Error saving image to database:', error);
+        }
+      };
 
 const dropdownData = ["Graph", "String"]
 
@@ -137,16 +207,16 @@ const dropdownData = ["Graph", "String"]
                                     <View className=" flex-row m-auto w-full justify-center items-center  px-[65] py-5  " >
                                         <TextInput
                                             className= "bg-white text-black flex-row w-full rounded-md border justify-between h-10 items-center border-gray-400 p-3 mr-3"
-                                            placeholder="Simpan gambar anda..."
+                                            placeholder={`${generateDefaultName()}`}
                                             placeholderTextColor="#aaa"
                                             value={fileName}
-                                            onChangeText={(e)=>setFileName(e)}
+                                            onChangeText={imageName}
                                             
                                         />
                                             <MiniPrimaryButton
                                                 label="Simpan"
                                                 icon={undefined}
-                                                onPress={undefined}
+                                                onPress={handelSimpan}
                                                 disabled={undefined}
                                                 loading={undefined}             
                                             />
