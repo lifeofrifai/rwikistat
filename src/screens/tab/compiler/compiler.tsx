@@ -16,6 +16,8 @@ import { Buffer } from 'buffer';
 import BlobImageViewer from '../../../components/BlobImageViewer';
 import SelectDropdown from 'react-native-select-dropdown';
 import auth, { firebase } from '@react-native-firebase/auth';
+import RNFetchBlob from 'rn-fetch-blob';
+
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -35,7 +37,7 @@ export default () => {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [response, setResponse] = useState('');
     const [compilerType, setCompilerType] = useState('String');
-    const [imageData, setImageData] = useState<String | null>(null);
+    const [imageData, setImageData] = useState<Blob | null>(null);
     const [loading, setLoading] = useState(false);
     const [fileName, setFileName] = useState('');
 
@@ -70,21 +72,23 @@ export default () => {
         setImageUrl(null);
 
         const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('image/png')) {
-        // If it's an image, set the response as an image source
-        const blob = await response.blob();
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const result = reader.result;
-          if (typeof result === 'string') {
-            const base64data = result.split(',')[1];
-            setImageUrl(base64data);
-            setImageData(base64data);
-          }
-        };
+        if (contentType && contentType.includes('image/png')) {
+          // If it's an image, set the response as an image source
+          const blob = await response.blob();
+          setImageData(blob);
+          // saveImageToDatabase(blob);
+          console.log(blob)
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const result = reader.result;
+            if (typeof result === 'string') {
+              const base64data = result.split(',')[1];
+              setImageUrl(base64data);
+              console.log('image',imageUrl);
+            }
+          };
         reader.readAsDataURL(blob);
         
-        console.log(imageData)
         setModalVisible(!isModalVisible);
 
       }else {
@@ -106,8 +110,8 @@ export default () => {
 
     
       const handelSimpan = async () => {
-        if (imageData) {
-          saveImageToDatabase(imageData);
+        if (base64Image) {
+          saveImageToDatabase(base64Image);
           
         }
       }
@@ -118,47 +122,89 @@ export default () => {
         return `plot_${timestamp}`;
       };
 
-      const saveImageToDatabase = async (imageData:String) => {
-        try {
-          // Send the image data to your server API for storage in the database
-          const storedToken = await AsyncStorage.getItem('userToken');
+      
+
+      // const saveImageToDatabase = async (blobData: Blob) => {
+      //   try {
+      //     const storedToken = await AsyncStorage.getItem('userToken');
           
+      //     // const formData = new FormData();
+      //     const user = firebase.auth().currentUser;
+      //     // formData.append('fileName', fileName || generateDefaultName());
+      //     // if (user) {
+      //     //   formData.append('uid',user?.uid);
+      //     //   }
+      //     //   formData.append('image', blobData);
+            
+
+      //       const url = API.address + '/api/history/';
+      //       const token = `Bearer ${storedToken}`;
+
+      //       const blobDataString = JSON.stringify(blobData);
+
+      //       const response = await RNFetchBlob.fetch('POST', url, {
+      //           Authorization: token,
+      //           'Content-Type': 'multipart/form-data',
+      //       }, [
+      //           {name: 'image', data: blobDataString ,filename: 'compiled_image.png'},
+      //           {name:'uid', data:user?.uid},
+      //           {name:'filename', data:fileName || generateDefaultName()}
+      //       ]);
+
+      //     // console.log(formData)
     
-          const formData = new FormData();
-          const user = firebase.auth().currentUser;
-          formData.append('fileName', fileName || generateDefaultName());
-          if (user) {
-            formData.append('uid',user?.uid);
-            }
-          formData.append('image', imageData);
-          setLoading(true);
-          console.log(formData)
+      //     const responseData = await response.json();
+    
+      //     // if (response.status === 200) {
+      //     //   // const responseData = await response.json();
+      //     //   console.log('Success:', responseData.message);
+      //     //   // Display success message to the user
+      //     // } else {
+      //     //   console.error('Error:', response.statusText);
+      //     //   // Display error message to the user using the status text
+      //     // }
       
-          const response = await fetch(API.address + `/api/history`, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-            body: formData,
-          });
+      //     console.log('Image saved to database successfully');
+      //     setLoading(false);
+      //   } catch (error) {
+      //     console.error('Error saving image to database:', error);
+      //   }
+      // };
+
+      const saveImageToDatabase = async (base64Image: string) => {
+        try {
+            const storedToken = await AsyncStorage.getItem('userToken');
+            const user = firebase.auth().currentUser;
+            const url = API.address + '/api/history/mobile';
+            const token = `Bearer ${storedToken}`;
     
-          const responseData = await response.json();
+            console.log('data gambar', base64Image);
     
-          if (response.status === 200) {
+            const requestData = {
+                uid: user?.uid || '',
+                fileName: fileName || generateDefaultName(),
+                image: base64Image
+            };
+    
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    Authorization: token,
+                    'Content-Type': 'application/json', // Ganti menjadi application/json
+                },
+                body: JSON.stringify(requestData), // Ubah menjadi JSON string
+            });
+    
             const responseData = await response.json();
-            console.log('Success:', responseData.message);
-            // Display success message to the user
-          } else {
-            console.error('Error:', response.statusText);
-            // Display error message to the user using the status text
-          }
-      
-          console.log('Image saved to database successfully');
-          setLoading(false);
+            console.log('Image saved to database successfully');
+            setLoading(false);
         } catch (error) {
-          console.error('Error saving image to database:', error);
+            console.error('Error saving image to database:', error);
         }
-      };
+    };
+    
+    
+
 
 const dropdownData = ["Graph", "String"]
 

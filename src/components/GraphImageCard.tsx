@@ -2,9 +2,11 @@ import { Image, Pressable, Text, View,TouchableOpacity, Alert , Linking} from "r
 import API from "../../api.json";
 import React, { useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as RNFetchBlob from 'rn-fetch-blob';
-import RNFS from 'react-native-fs';
-
+import RNFetchBlob from 'rn-fetch-blob';
+import { encode } from 'base-64';
+import btoa from 'btoa';
+import {  Platform } from "react-native";
+import {CameraRoll} from "@react-native-camera-roll/camera-roll"
 
 interface GraphImageCard{
     id: number,
@@ -52,42 +54,45 @@ const GraphImageCard = ({
         }
     }; 
 
-    // const downloadImage = async () => {
-    //     try {
-    //         const response = await fetch(API.address + `/api/history/download/${id}`, {
-    //             method: 'GET',
-    //             // headers: header,
-    //         });
-    //       const blob = await response.blob();
-    //       const base64: string = await blobToBase64(blob); // Specify base64 as string
-    //       const imagePath = `${RNFS.DocumentDirectoryPath}/your-image-name.png`;
-    //       await RNFS.writeFile(imagePath, base64, 'base64');
-    //       setImageUrl1(imagePath);
-    //       console.log(imagePath)
-    //       Alert.alert('Success', 'Image downloaded successfully');
-    //     } catch (error) {
-    //       Alert.alert('Error', 'Failed to download image');
-    //       console.error('Error downloading image:', error);
-    //     }
-    //   };
-      
-    //   const blobToBase64 = async (blob: Blob): Promise<string> => {
-    //     return new Promise((resolve, reject) => {
-    //       const reader = new FileReader();
-    //       reader.onerror = () => {
-    //         reader.abort();
-    //         reject(new Error("Problem reading blob."));
-    //       };
-    //       reader.onload = () => {
-    //         if (typeof reader.result === 'string') {
-    //           resolve(reader.result);
-    //         } else {
-    //           reject(new Error("Expected result to be a string."));
-    //         }
-    //       };
-    //       reader.readAsDataURL(blob);
-    //     });
-    //   };
+    
+    const downloadImage = async () => {
+        const url = `${API.address}${imageUrl}`;
+        console.log(url);
+    
+        let imgUrl = `${API.address}${imageUrl}`;
+    
+        let newImgUri = imgUrl.lastIndexOf('/');
+        let imageName = imgUrl.substring(newImgUri);
+    
+        let dirs = RNFetchBlob.fs.dirs;
+        let path = Platform.OS === 'ios' ? dirs['MainBundleDir'] + imageName : dirs.PictureDir + imageName;
+    
+        const saveToGallery = () => {
+            if (Platform.OS == 'android') {
+                RNFetchBlob.config({
+                    fileCache: true,
+                    appendExt: 'png',
+                    indicator: true,
+                    IOSBackgroundTask: true,
+                    path: path,
+                    addAndroidDownloads: {
+                        useDownloadManager: true,
+                        notification: true,
+                        path: path,
+                        description: 'Image'
+                    },
+                }).fetch("GET", imgUrl).then(res => {
+                    console.log(res, 'end downloaded');
+                });
+            } else {
+                CameraRoll.saveToCameraRoll(imgUrl);
+            }
+        };
+    
+        // Call the saveToGallery function
+        saveToGallery();
+    };
+    
 
     return(
         <View className="flex-row w-full bg-white px-4 mt-2 py-2">
@@ -107,7 +112,7 @@ const GraphImageCard = ({
             </Pressable>
             <Pressable 
                 className="bg-mainGreen rounded-md w-24 mt-1"
-                onPress={undefined}
+                onPress={downloadImage}
             >
                 <Text className=" text-white text-base font-medium text-center">Download</Text>
             </Pressable>
