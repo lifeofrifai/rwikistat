@@ -1,5 +1,5 @@
 import { NativeWindStyleSheet } from "nativewind";
-import { View, Text, ScrollView, Pressable, FlatList } from "react-native";
+import { View, Text, ScrollView, Pressable, FlatList, RefreshControl, ActivityIndicator } from "react-native";
 import Foundation  from "react-native-vector-icons/Foundation";
 import { UserAuth } from "../context/authContext";
 import { useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth, { firebase } from '@react-native-firebase/auth';
 import API from "../../api.json";
 import GraphImageCard from "./GraphImageCard";
+import { ToastProvider } from "react-native-toast-notifications";
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -25,6 +26,7 @@ interface imageData {
 function GraphImage () {
     const {user} = UserAuth();
     const [testData, setTestData] = useState<imageData[]>([]);
+    const [refreshing, setRefreshing] = useState(true);
 
     const fetchData = async () => {
         try {
@@ -43,6 +45,7 @@ function GraphImage () {
             .then((responJson)=>{
                 setTestData(responJson);
                 console.log(responJson);
+                setRefreshing(false);
             })
             } catch (error) {
                 console.error('Gagal mengambil data:', error);
@@ -53,9 +56,30 @@ function GraphImage () {
         fetchData();
     }, [user]);
 
+    const onRefresh = () => {
+         //Clear old data of the list
+        setTestData([]);
+         //Call the Service to get the latest data
+        setRefreshing(true);
+        fetchData();
+
+    }
+
     return (
+        <ToastProvider>
         <View className="flex-1 items-center bg-[#EBEBEB] ">
+            {refreshing ? (
+                <View className="items-center justify-center flex-1 ">
+                    <ActivityIndicator size="large" color="#00726B"/>
+                </View>
+            ):(
             <FlatList
+                refreshControl={
+                    <RefreshControl 
+                        refreshing={refreshing} 
+                        onRefresh={onRefresh} 
+                    />
+                }
                 className="w-full"
                 data={testData}
                 renderItem={({item}) => (
@@ -66,7 +90,10 @@ function GraphImage () {
                     />
                 )}
             />
+            )}
+            
         </View>
+        </ToastProvider>
         
     );
 }

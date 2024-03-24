@@ -91,8 +91,9 @@ const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
     
           if (status === 'false') {
             if (port) {
-              shinyUrl = `http://10.38.0.2:${port}`;
+              shinyUrl = `http://rwikistat.usk.ac.id:${port}`;
               setUrlShiny(shinyUrl);
+              Linking.openURL(`http://rwikistat.usk.ac.id:${port}`);
             }
             const response = await fetch(API.address +`/api/compiler/shiny/`, {
               method: 'POST',
@@ -107,7 +108,6 @@ const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
       
             const shinyOutput = responseData.shinyOutput.text;
             const originalOutput = responseData.originalOutput;
-            Linking.openURL(`http://10.38.0.2:${port}`);
       
             // Contoh: Set state atau melakukan operasi lainnya
             // setOutputDetails(shinyOutput);
@@ -129,10 +129,6 @@ const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
         }
       };
 
-    
-    const linkShinny = () => {
-        Linking.openURL('http://10.38.0.2:4000/');
-    }
 
     return (
         <SafeAreaView className="flex-1 bg-[#EBEBEB] ">

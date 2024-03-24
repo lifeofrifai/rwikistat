@@ -3,10 +3,9 @@ import API from "../../api.json";
 import React, { useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNFetchBlob from 'rn-fetch-blob';
-import { encode } from 'base-64';
-import btoa from 'btoa';
 import {  Platform } from "react-native";
 import {CameraRoll} from "@react-native-camera-roll/camera-roll"
+import { useToast } from "react-native-toast-notifications";
 
 interface GraphImageCard{
     id: number,
@@ -41,9 +40,11 @@ const GraphImageCard = ({
                 method: 'DELETE',
                 // headers: header,
             });
+            toast.show("Gambar Dihapus", { duration: 2000, type: "success" })
     
             if (!response.ok) {
                 throw new Error('Failed to delete data');
+                
             }
     
             const responJson = await response.json();
@@ -51,6 +52,7 @@ const GraphImageCard = ({
         } catch (error) {
             console.error('Gagal menghapus data:', error);
             // Handle error secara sesuai kebutuhan Anda
+            toast.show("Gambar Gagal Dihapus", { duration: 2000, type: "error" })
         }
     }; 
 
@@ -92,6 +94,8 @@ const GraphImageCard = ({
         // Call the saveToGallery function
         saveToGallery();
     };
+
+    const toast = useToast();
     
 
     return(
