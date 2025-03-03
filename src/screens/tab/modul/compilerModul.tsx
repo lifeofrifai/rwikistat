@@ -13,6 +13,7 @@ import API from "../../../../api.json";
 import { ActionCodeURL } from 'firebase/auth/cordova';
 import { ScrollView } from 'react-native-gesture-handler';
 import SelectDropdown from 'react-native-select-dropdown';
+import { ToastProvider, useToast } from 'react-native-toast-notifications';
 
 NativeWindStyleSheet.setOutput({
     default: "native",
@@ -93,7 +94,7 @@ const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
             if (port) {
               shinyUrl = `http://rwikistat.usk.ac.id:${port}`;
               setUrlShiny(shinyUrl);
-              Linking.openURL(`http://rwikistat.usk.ac.id:${port}`);
+              await Linking.openURL(`http://rwikistat.usk.ac.id:${port}`);
             }
             const response = await fetch(API.address +`/api/compiler/shiny/`, {
               method: 'POST',
@@ -112,10 +113,12 @@ const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
             // Contoh: Set state atau melakukan operasi lainnya
             // setOutputDetails(shinyOutput);
             setResponse(originalOutput);
+            toast.show("Port Telah Digunakan, Silahkan Ganti", { duration: 2000, type: "success" })
       
           }else if (status === 'true') {
             console.log('Port is already in use');
             setErrorMessage('Port is already in use');
+            
           } else {
             console.log('Unexpected value for responseData.status:', status);
           }
@@ -129,8 +132,10 @@ const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
         }
       };
 
+      const toast = useToast();
 
     return (
+        <ToastProvider>
         <SafeAreaView className="flex-1 bg-[#EBEBEB] ">
         <KeyboardAvoidingView 
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -201,6 +206,7 @@ const CompilerModulScreen:React.FC<CompilerModulScreenProps> = ({ route }) => {
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
         </SafeAreaView>
+        </ToastProvider>
     );
 }
 

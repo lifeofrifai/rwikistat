@@ -17,6 +17,7 @@ import BlobImageViewer from '../../../components/BlobImageViewer';
 import SelectDropdown from 'react-native-select-dropdown';
 import auth, { firebase } from '@react-native-firebase/auth';
 import RNFetchBlob from 'rn-fetch-blob';
+import { ToastProvider, useToast } from "react-native-toast-notifications";
 
 
 NativeWindStyleSheet.setOutput({
@@ -59,6 +60,7 @@ export default () => {
     const handleCompile = async () => {
         try {
             const userToken = await AsyncStorage.getItem('userToken');
+            setLoading(true);
           const response = await fetch(API.address + '/api/compiler/test/', {
             method: 'POST',
             headers: {
@@ -95,6 +97,7 @@ export default () => {
             // If it's not an image, set the response as text
             const data = await response.text();
             setResponse(data);
+            setLoading(false);
             setModalVisible(!isModalVisible);
         }
         } catch (error) {
@@ -112,6 +115,8 @@ export default () => {
       const handelSimpan = async () => {
         if (base64Image) {
           saveImageToDatabase(base64Image);
+          toast.show("Gambar Disimpan", { duration: 2000, type: "success" })
+
           
         }
       }
@@ -171,8 +176,11 @@ export default () => {
       //   }
       // };
 
+      const toast = useToast();
+
       const saveImageToDatabase = async (base64Image: string) => {
         try {
+            setLoading(true);
             const storedToken = await AsyncStorage.getItem('userToken');
             const user = firebase.auth().currentUser;
             const url = API.address + '/api/history/mobile';
@@ -209,6 +217,7 @@ export default () => {
 const dropdownData = ["Graph", "String"]
 
     return (
+        <ToastProvider>
         <SafeAreaView className="flex-1 bg-[#EBEBEB] ">
         <KeyboardAvoidingView 
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -236,12 +245,13 @@ const dropdownData = ["Graph", "String"]
                         icon="play-circle"
                         onPress={handleCompile}    
                         disabled={undefined}
-                        loading={undefined}             
+                        loading={loading}             
                     />
                     <Modal
                         isVisible={isModalVisible}
                         swipeDirection={['left', 'right']}
                         onSwipeComplete={toggleModal}
+                        scrollHorizontal={true}
                     >
                         <ScrollView 
                             className='h-1/2 px-2 py-3 bg-white rounded-lg'
@@ -264,7 +274,7 @@ const dropdownData = ["Graph", "String"]
                                                 icon={undefined}
                                                 onPress={handelSimpan}
                                                 disabled={undefined}
-                                                loading={undefined}             
+                                                loading={loading}             
                                             />
                                     </View>
                                     <Image
@@ -328,5 +338,6 @@ const dropdownData = ["Graph", "String"]
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
         </SafeAreaView>
+        </ToastProvider>
     );
 }

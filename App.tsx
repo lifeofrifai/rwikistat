@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 
 export default function App() {
 
+
+
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
     const enabled =

@@ -93,6 +93,7 @@ const GraphImageCard = ({
     
         // Call the saveToGallery function
         saveToGallery();
+        toast.show("Gambar Diunduh", { duration: 2000, type: "success" })
     };
 
     const toast = useToast();
